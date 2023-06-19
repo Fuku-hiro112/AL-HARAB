@@ -26,7 +26,6 @@ public class PlayerAction : MonoBehaviour
     void Update()
     {
         isGround = ground.IsGround();
-        Debug.Log(isGround);
 
         if (canMove)
         {
@@ -38,6 +37,9 @@ public class PlayerAction : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ‰E‚É“®‚­
+    /// </summary>
     void Move()
     {
         if (speed_elapsed_time > 6)
@@ -50,8 +52,8 @@ public class PlayerAction : MonoBehaviour
         }
 
         rb.velocity = new Vector3(speed * speed_elapsed_time, rb.velocity.y);
-        //Debug.Log(rb.velocity);
     }
+
     void Jamp()
     {
         rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);

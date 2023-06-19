@@ -7,9 +7,11 @@ public class GroundCheck : MonoBehaviour
     private bool isGroundEnter, isGroundStay, isGroundExit;
 
     //物理判定の更新毎に呼ぶ必要がある
+    /// <summary>
+    /// 地面に設置しているかを判定する
+    /// </summary>
     public bool IsGround()
     {
-        //Debug.Log("開いたよ");
         if (isGroundEnter || isGroundStay)
         {
             isGround = true;
@@ -28,22 +30,21 @@ public class GroundCheck : MonoBehaviour
         return isGround;
     }
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Enterはした");
         if (collision.tag == groundTag)
         {
             isGroundEnter = true;
         }
     }
-    private void OnTriggerStay(Collider collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.tag == groundTag)
         {
             isGroundStay = true;
         }
     }
-    private void OnTriggerExit(Collider collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.tag == groundTag)
         {
