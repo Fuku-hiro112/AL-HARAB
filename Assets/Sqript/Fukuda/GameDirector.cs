@@ -24,9 +24,8 @@ public class GameDirector : MonoBehaviour
 
     float Speed_rate()
     {
-        float rate = 0;
+        float rate;
         rate = speed/6;
-        Debug.Log(rate);
         return rate;
     }
 }
