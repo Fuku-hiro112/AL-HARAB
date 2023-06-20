@@ -31,9 +31,16 @@ public class PlayerAction : MonoBehaviour
         {
             Move();
         }
+
         if (Input.GetKeyDown(KeyCode.Space) && isGround)
         {
             Jamp();
+        }
+
+        if (( Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0) ) 
+            && isGround)
+        {
+
         }
     }
 
@@ -57,5 +64,9 @@ public class PlayerAction : MonoBehaviour
     void Jamp()
     {
         rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+    }
+    void Trolley_Switching()
+    {
+
     }
 }
