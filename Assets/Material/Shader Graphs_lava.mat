@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Shader Graphs_lava
   m_Shader: {fileID: -6465566751694194690, guid: d637cf9af97b8684497e045d28663903, type: 3}
-  m_Parent: {fileID: -876546973899608171, guid: d637cf9af97b8684497e045d28663903, type: 3}
+  m_Parent: {fileID: 2100000, guid: fba16e934dc9b0646a5f08f3235d1f5a, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -26,7 +26,7 @@ Material:
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _Color: {r: 1.490196, g: 0, b: 0, a: 0}
+    - _Color: {r: 0, g: 1.4901959, b: 1.30138, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &4774106271084261376
 MonoBehaviour:
