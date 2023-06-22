@@ -18,12 +18,11 @@ public class GameDirector : MonoBehaviour
     void Update()
     {
         speed = playerAction.speed_elapsed_time;
-        //Debug.Log(speed);
+
         speedGage.fillAmount = Speed_rate();
 
-
         //ì_êîÇï\é¶
-        //timeText.text = PlayerAction.time.ToString("F2");
+        timeText.text = PlayerAction.clear_time.ToString("F2");
     }
 
     

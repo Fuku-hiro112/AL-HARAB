@@ -3,69 +3,109 @@ using UnityEngine;
 public class PlayerAction : MonoBehaviour
 {
     public float speed_elapsed_time = 0;
-    [SerializeField] float speed = 5;
-    [SerializeField] float jump_speed = 7.5f;
-    [SerializeField] float line_change_jump = 2.5f;
+    [SerializeField] float dash_speed = 1;
+    [SerializeField] float jump_power = 2.5f;
+    [SerializeField] float top_Jump = 2.5f;
+    [SerializeField] float botm_Jump = 7.5f;
 
     public static float clear_time;
 
-    private bool is_ground = false;
-    private bool can_move;
-    private bool can_change_line;
-    private bool can_enable;
+    private bool isGround = false;
+    private bool isMove;
+    //private bool can_change_line;
+    private bool isInvisibl;
+    //private bool jumped;
+
     private GroundCheck ground;
     private Rigidbody2D rb;
+    private BoxCollider2D collider;
 
     Transform goal;
 
-    float goal_position;
+    Line whereLine;
+
+    enum Line
+    {
+        Top,
+        Bottom
+    }
+
     //public float Speed_elapTime{get; set;}
 
     void Start()
     {
+        whereLine = Line.Top;
         rb = GetComponent<Rigidbody2D>();
         ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
         goal = GameObject.Find("Goal").GetComponent<Transform>();
+        collider = GetComponent<BoxCollider2D>();
 
-        can_move = true;
-        can_change_line = false;
-        can_enable = false;
+        isMove = true;
+        //can_change_line = false;
+        isInvisibl = false;
     }
-
 
     void Update()
     {
-        is_ground = ground.IsGround();
+        isGround = ground.IsGround();
 
-        if (can_move)
+        if (isMove)
         {
             Move();
         }
 
         if (Headed_goal())//ゴールするまで
         {
-            //経過時間を
+            //経過時間を足す
             clear_time += Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && is_ground)
+        if (Input.GetKeyDown(KeyCode.Space) && isGround)
         {
-            Jamp(jump_speed);
+            Jump(jump_power);
         }
+
+        //TODO:
+        /*if (jumped)
+        {
+            transform.rotation = new Quaternion(,,);
+        }*/
+
 
 //HACK:これ以降のコードがboolを多様しているため修正が必要
+
         if (( Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0) ) 
-            && is_ground)
+            && isGround)
         {
-            can_change_line = true;
+            if (whereLine == Line.Bottom)
+            {
+                Debug.Log("下");
+                Jump(botm_Jump);
+                whereLine = Line.Bottom;
+            }
+            else
+            {
+                Debug.Log("上");
+                Jump(top_Jump);
+                whereLine = Line.Top;
+            }
+            collider.isTrigger = true;
+
         }
 
-        if (can_change_line)
+        //
+        if (collider.isTrigger != true) return;
+        if (whereLine == Line.Bottom && rb.velocity.y <= 0)
         {
-            Change_Line();
+            collider.isTrigger = false;
+            whereLine = Line.Top;
         }
-
-        
+        else if (whereLine == Line.Top && transform.position.y < -2f)
+        {
+            //Triggerを外す
+            collider.isTrigger = false;
+            whereLine = Line.Bottom;
+        }   
     }
 
     /// <summary>
@@ -82,44 +122,74 @@ public class PlayerAction : MonoBehaviour
             speed_elapsed_time += Time.deltaTime;
         }
 
-        rb.velocity = new Vector3(speed * speed_elapsed_time, rb.velocity.y);
+        rb.velocity = new Vector3(dash_speed * speed_elapsed_time, rb.velocity.y);
     }
 
-    void Jamp(float _jump_speed)
+    /// <summary>
+    /// ジャンプする
+    /// </summary>
+    void Jump(float _jump_speed)
     {
+        Debug.Log(_jump_speed);
         rb.velocity = new Vector2(rb.velocity.x, _jump_speed);
     }
-    /// <summary>
-    /// 線路を変える
-    /// </summary>
-    void Change_Line()
-    {
-        float pos_y = transform.position.y;
-        can_enable = true;
 
-        if (pos_y <= -2)
-        {
-            Jamp(jump_speed);//FIXME:line_cahange_jampでジャンプしている
-            can_enable = true;
-        }
-        else
-        {
-            Jamp(line_change_jump);
-            //upper_line_collider.enabled = false; //TODO:敵キャラや上段のObjも全てこれをする
-            can_change_line = false;//=!can_change_line にすると反転する
-        }
-
-        if (can_enable && rb.velocity.y <= 0)
-        {
-            //upper_line_collider.enabled = true; //TODO:敵キャラや上段のObjも全てこれをする
-            can_change_line = false;
-        }
-    }
     /// <summary>
     /// ゴールに向かっている時　（ゴールしていない時）
     /// </summary>
     bool Headed_goal()
     {
-        return goal_position > transform.position.x;
+        return goal.position.x > transform.position.x;
     }
+
 }
+/*
+   /// <summary>
+   /// 線路を変える
+   /// </summary>
+   void Top_Line_Change()
+   {
+       Jamp(bottomLine_changeJump);
+
+       colid.enabled = false;
+       can_enable = true;
+       Debug.Log("上から飛んだ");
+   }
+   /// <summary>
+   /// 線路を変える
+   /// </summary>
+   void Bottom_Line_Change()
+   {
+       Jamp(jump_speed);
+
+       colid.enabled = false;
+       can_enable = true;
+       Debug.Log("下から飛んだ");
+   }*/
+
+/*
+can_enable = true;
+
+//どちらの線路から飛ぶか
+if (UnderLine_flyable())
+{
+    Jamp(jump_speed);//FIXME:line_cahange_jampでジャンプしている
+    can_enable = true;
+    Debug.Log("下から飛んだ");
+}
+else
+{
+    Jamp(line_change_jump);
+    //upper_line_collider.enabled = false; //TODO:敵キャラや上段のObjも全てこれをする
+    colid.enabled = false;
+    can_change_line = false;//=!can_change_line にすると反転する
+    Debug.Log("上から飛んだ");
+}
+
+//下の線路から飛んだ時 -> 落下時にコライダーを復活する
+if (can_enable && rb.velocity.y <= 0)
+{
+    //upper_line_collider.enabled = true; //TODO:敵キャラや上段のObjも全てこれをする
+    colid.enabled = true;
+    can_change_line = false;
+}*/
