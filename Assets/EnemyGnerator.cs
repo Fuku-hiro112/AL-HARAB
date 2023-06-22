@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemytorGenere : MonoBehaviour
+public class EnemyGnerator : MonoBehaviour
 {
-    public GameObject EnemyPrefab;
     // Start is called before the first frame update
     void Start()
     {
