@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class PlayerAction : MonoBehaviour
 {
@@ -7,10 +6,9 @@ public class PlayerAction : MonoBehaviour
     [SerializeField] float speed = 5;
     [SerializeField] float jump_speed = 7.5f;
     [SerializeField] float line_change_jump = 2.5f;
-    [SerializeField] GameObject upper_line_tile;
 
-    TilemapCollider2D upper_line_collider;
-    
+    public static float clear_time;
+
     private bool is_ground = false;
     private bool can_move;
     private bool can_change_line;
@@ -18,13 +16,16 @@ public class PlayerAction : MonoBehaviour
     private GroundCheck ground;
     private Rigidbody2D rb;
 
+    Transform goal;
+
+    float goal_position;
     //public float Speed_elapTime{get; set;}
 
     void Start()
     {
-        ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
         rb = GetComponent<Rigidbody2D>();
-        upper_line_collider = upper_line_tile.GetComponent<TilemapCollider2D>();
+        ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
+        goal = GameObject.Find("Goal").GetComponent<Transform>();
 
         can_move = true;
         can_change_line = false;
@@ -39,6 +40,12 @@ public class PlayerAction : MonoBehaviour
         if (can_move)
         {
             Move();
+        }
+
+        if (Headed_goal())//ゴールするまで
+        {
+            //経過時間を
+            clear_time += Time.deltaTime;
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && is_ground)
@@ -57,6 +64,8 @@ public class PlayerAction : MonoBehaviour
         {
             Change_Line();
         }
+
+        
     }
 
     /// <summary>
@@ -80,7 +89,9 @@ public class PlayerAction : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, _jump_speed);
     }
-
+    /// <summary>
+    /// 線路を変える
+    /// </summary>
     void Change_Line()
     {
         float pos_y = transform.position.y;
@@ -94,14 +105,21 @@ public class PlayerAction : MonoBehaviour
         else
         {
             Jamp(line_change_jump);
-            upper_line_collider.enabled = false; //TODO:敵キャラや上段のObjも全てこれをする
+            //upper_line_collider.enabled = false; //TODO:敵キャラや上段のObjも全てこれをする
             can_change_line = false;//=!can_change_line にすると反転する
         }
 
         if (can_enable && rb.velocity.y <= 0)
         {
-            upper_line_collider.enabled = true; //TODO:敵キャラや上段のObjも全てこれをする
+            //upper_line_collider.enabled = true; //TODO:敵キャラや上段のObjも全てこれをする
             can_change_line = false;
         }
+    }
+    /// <summary>
+    /// ゴールに向かっている時　（ゴールしていない時）
+    /// </summary>
+    bool Headed_goal()
+    {
+        return goal_position > transform.position.x;
     }
 }
