@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,6 +6,7 @@ public class PlayerAction : MonoBehaviour
     public float speed_elapsed_time = 0;
     [SerializeField] float speed = 5;
     [SerializeField] float jump_speed = 7.5f;
+    [SerializeField] float line_change_jump = 2.5f;
     [SerializeField] GameObject upper_line_tile;
 
     TilemapCollider2D upper_line_collider;
@@ -44,9 +43,10 @@ public class PlayerAction : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && is_ground)
         {
-            Jamp();
+            Jamp(jump_speed);
         }
 
+//HACK:これ以降のコードがboolを多様しているため修正が必要
         if (( Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0) ) 
             && is_ground)
         {
@@ -76,24 +76,31 @@ public class PlayerAction : MonoBehaviour
         rb.velocity = new Vector3(speed * speed_elapsed_time, rb.velocity.y);
     }
 
-    void Jamp()
+    void Jamp(float _jump_speed)
     {
-        rb.velocity = new Vector2(rb.velocity.x, jump_speed);
+        rb.velocity = new Vector2(rb.velocity.x, _jump_speed);
     }
+
     void Change_Line()
     {
         float pos_y = transform.position.y;
         can_enable = true;
 
-        if (pos_y < -2)
+        if (pos_y <= -2)
         {
-            Jamp();
+            Jamp(jump_speed);//FIXME:line_cahange_jampでジャンプしている
             can_enable = true;
+        }
+        else
+        {
+            Jamp(line_change_jump);
+            upper_line_collider.enabled = false; //TODO:敵キャラや上段のObjも全てこれをする
+            can_change_line = false;//=!can_change_line にすると反転する
         }
 
         if (can_enable && rb.velocity.y <= 0)
         {
-            upper_line_collider.enabled = true;
+            upper_line_collider.enabled = true; //TODO:敵キャラや上段のObjも全てこれをする
             can_change_line = false;
         }
     }
