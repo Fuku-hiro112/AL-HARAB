@@ -30,7 +30,7 @@ public class GameDirector : MonoBehaviour
     float Speed_rate()
     {
         float rate;
-        rate = speed/6;
+        rate = speed/5;
         return rate;
     }
 

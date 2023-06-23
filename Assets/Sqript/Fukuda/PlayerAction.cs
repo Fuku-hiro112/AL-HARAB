@@ -12,13 +12,10 @@ public class PlayerAction : MonoBehaviour
 
     private bool isGround = false;
     private bool isMove;
-    //private bool can_change_line;
-    private bool isInvisibl;
-    //private bool jumped;
 
     private GroundCheck ground;
     private Rigidbody2D rb;
-    private BoxCollider2D collider;
+    private BoxCollider2D collider2d;
 
     Transform goal;
 
@@ -38,11 +35,9 @@ public class PlayerAction : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
         goal = GameObject.Find("Goal").GetComponent<Transform>();
-        collider = GetComponent<BoxCollider2D>();
+        collider2d = GetComponent<BoxCollider2D>();
 
         isMove = true;
-        //can_change_line = false;
-        isInvisibl = false;
     }
 
     void Update()
@@ -65,14 +60,11 @@ public class PlayerAction : MonoBehaviour
             Jump(jump_power);
         }
 
-        //TODO:
+        //TODO:ジャンプによって角度が変わる
         /*if (jumped)
         {
             transform.rotation = new Quaternion(,,);
         }*/
-
-
-//HACK:これ以降のコードがboolを多様しているため修正が必要
 
         if (( Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0) ) 
             && isGround)
@@ -89,21 +81,23 @@ public class PlayerAction : MonoBehaviour
                 Jump(top_Jump);
                 whereLine = Line.Top;
             }
-            collider.isTrigger = true;
+            collider2d.isTrigger = true;
 
         }
 
-        //
-        if (collider.isTrigger != true) return;
-        if (whereLine == Line.Bottom && rb.velocity.y <= 0)
+        //Triggerがオンならこの後の処理を実行
+        if (collider2d.isTrigger != true) return;
+        //下の線路にいた、ジャンプの最高到達点についたとき
+        if (whereLine == Line.Bottom && Highest_point())
         {
-            collider.isTrigger = false;
+            collider2d.isTrigger = false;
             whereLine = Line.Top;
         }
+        //
         else if (whereLine == Line.Top && transform.position.y < -2f)
         {
             //Triggerを外す
-            collider.isTrigger = false;
+            collider2d.isTrigger = false;
             whereLine = Line.Bottom;
         }   
     }
@@ -121,8 +115,8 @@ public class PlayerAction : MonoBehaviour
         {
             speed_elapsed_time += Time.deltaTime;
         }
-
-        rb.velocity = new Vector3(dash_speed * speed_elapsed_time, rb.velocity.y);
+        //FIXME:マジックナンバーを削除、数式の簡略化　初期スピード1 Maxスピード6 ゲージMaxまで６秒
+        rb.velocity = new Vector3(dash_speed * (speed_elapsed_time * 5/6 + 1f), rb.velocity.y);
     }
 
     /// <summary>
@@ -141,55 +135,12 @@ public class PlayerAction : MonoBehaviour
     {
         return goal.position.x > transform.position.x;
     }
+    /// <summary>
+    /// ジャンプした際の最高到達点
+    /// </summary>
+    bool Highest_point()
+    {
+        return rb.velocity.y <= 0;
+    }
 
 }
-/*
-   /// <summary>
-   /// 線路を変える
-   /// </summary>
-   void Top_Line_Change()
-   {
-       Jamp(bottomLine_changeJump);
-
-       colid.enabled = false;
-       can_enable = true;
-       Debug.Log("上から飛んだ");
-   }
-   /// <summary>
-   /// 線路を変える
-   /// </summary>
-   void Bottom_Line_Change()
-   {
-       Jamp(jump_speed);
-
-       colid.enabled = false;
-       can_enable = true;
-       Debug.Log("下から飛んだ");
-   }*/
-
-/*
-can_enable = true;
-
-//どちらの線路から飛ぶか
-if (UnderLine_flyable())
-{
-    Jamp(jump_speed);//FIXME:line_cahange_jampでジャンプしている
-    can_enable = true;
-    Debug.Log("下から飛んだ");
-}
-else
-{
-    Jamp(line_change_jump);
-    //upper_line_collider.enabled = false; //TODO:敵キャラや上段のObjも全てこれをする
-    colid.enabled = false;
-    can_change_line = false;//=!can_change_line にすると反転する
-    Debug.Log("上から飛んだ");
-}
-
-//下の線路から飛んだ時 -> 落下時にコライダーを復活する
-if (can_enable && rb.velocity.y <= 0)
-{
-    //upper_line_collider.enabled = true; //TODO:敵キャラや上段のObjも全てこれをする
-    colid.enabled = true;
-    can_change_line = false;
-}*/
