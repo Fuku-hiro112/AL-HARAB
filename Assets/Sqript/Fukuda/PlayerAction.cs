@@ -7,6 +7,7 @@ public class PlayerAction : MonoBehaviour
     [SerializeField] float jump_power = 2.5f;
     [SerializeField] float top_Jump = 2.5f;
     [SerializeField] float botm_Jump = 7.5f;
+    int hp;
 
     public static float clear_time;
 
@@ -31,6 +32,7 @@ public class PlayerAction : MonoBehaviour
 
     void Start()
     {
+        hp =  3;
         whereLine = Line.Top;
         rb = GetComponent<Rigidbody2D>();
         ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
@@ -81,23 +83,23 @@ public class PlayerAction : MonoBehaviour
                 Jump(top_Jump);
                 whereLine = Line.Top;
             }
-            collider2d.isTrigger = true;
+            collider2d.enabled = false;
 
         }
 
-        //Triggerがオンならこの後の処理を実行
-        if (collider2d.isTrigger != true) return;
+        //collider2dがfalseならこの後の処理を実行
+        if (collider2d.enabled != false) return;
         //下の線路にいた、ジャンプの最高到達点についたとき
         if (whereLine == Line.Bottom && Highest_point())
         {
-            collider2d.isTrigger = false;
+            collider2d.enabled = true;
             whereLine = Line.Top;
         }
         //
         else if (whereLine == Line.Top && transform.position.y < -2f)
         {
-            //Triggerを外す
-            collider2d.isTrigger = false;
+            //
+            collider2d.enabled = true;
             whereLine = Line.Bottom;
         }   
     }
@@ -126,6 +128,14 @@ public class PlayerAction : MonoBehaviour
     {
         Debug.Log(_jump_speed);
         rb.velocity = new Vector2(rb.velocity.x, _jump_speed);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other == null)
+        {
+
+        }
     }
 
     /// <summary>
