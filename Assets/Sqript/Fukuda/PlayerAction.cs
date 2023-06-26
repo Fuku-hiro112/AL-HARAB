@@ -1,26 +1,46 @@
 using UnityEngine;
+using UnityEngine.UI;
 
+/// <summary>
+/// private変数は　_を付けてcamelCasing（キャメルケース）を仕様する
+/// public変数は　A最初大文字　パスカル ケース(Pascal)
+/// ローカル変数は　
+/// </summary>
 public class PlayerAction : MonoBehaviour
 {
-    public float speed_elapsed_time = 0;
-    [SerializeField] float dash_speed = 1;
-    [SerializeField] float jump_power = 2.5f;
-    [SerializeField] float top_Jump = 2.5f;
-    [SerializeField] float botm_Jump = 7.5f;
-    int hp;
+    public float SpeedGage = 0;
+    [SerializeField] float _dashSpeed = 1;
+    [SerializeField] float _jumpPower = 2.5f;
+    [SerializeField] float _topJump = 2.5f;
+    [SerializeField] float _botmJump = 8.0f;
+    [SerializeField] float _knockBackTime = 0.5f;
+    [SerializeField] Vector2 _knockBackPower = new Vector2(-3f,5f);
+    [SerializeField] Image[] _imgHealth;
 
-    public static float clear_time;
+    public static int HpCurrent;
+    public static float ClearTime;
 
-    private bool isGround = false;
-    private bool isMove;
+    public float ControlLostTime;
 
-    private GroundCheck ground;
-    private Rigidbody2D rb;
-    private BoxCollider2D collider2d;
+    private bool _isGround = false;
 
-    Transform goal;
+    bool bControl;
+    private bool _canJump;
 
-    Line whereLine;
+    private GroundCheck _ground;
+    private Rigidbody2D _rb;
+    private BoxCollider2D _collider2d;
+
+    private const int _oneMeter = 2;
+    private const int _twoMeter = 4;
+
+    private const int _damage1 = 1;
+    private const int _damage2 = 2;
+    private const int _damage3 = 3;
+
+    private Transform _goal;
+
+    private Line _whereLine;
 
     enum Line
     {
@@ -28,38 +48,41 @@ public class PlayerAction : MonoBehaviour
         Bottom
     }
 
-    //public float Speed_elapTime{get; set;}
-
     void Start()
     {
-        hp =  3;
-        whereLine = Line.Top;
-        rb = GetComponent<Rigidbody2D>();
-        ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
-        goal = GameObject.Find("Goal").GetComponent<Transform>();
-        collider2d = GetComponent<BoxCollider2D>();
-
-        isMove = true;
+        HpCurrent =  3;
+        _whereLine = Line.Top;
+        _rb = GetComponent<Rigidbody2D>();
+        _ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
+        _goal = GameObject.Find("Goal").GetComponent<Transform>();
+        _collider2d = GetComponent<BoxCollider2D>();
+        ControlLostTime = 0f;
     }
 
     void Update()
     {
-        isGround = ground.IsGround();
+        _canJump = Input.GetKeyDown(KeyCode.Space) && _isGround;
+        bControl = ControlLostTime <= 0;
 
-        if (isMove)
+        _isGround = _ground.IsGround();
+
+        //操作不可時間をカウントする
+        if (ControlLostTime > 0)
+        {
+            ControlLostTime -= Time.deltaTime;
+        }
+
+        if (bControl == true)
         {
             Move();
+
+            if (_canJump) Jump(_jumpPower);
         }
 
-        if (Headed_goal())//ゴールするまで
+        if (IsHeadedGoal())//ゴールするまで
         {
             //経過時間を足す
-            clear_time += Time.deltaTime;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space) && isGround)
-        {
-            Jump(jump_power);
+            ClearTime += Time.deltaTime;
         }
 
         //TODO:ジャンプによって角度が変わる
@@ -67,58 +90,59 @@ public class PlayerAction : MonoBehaviour
         {
             transform.rotation = new Quaternion(,,);
         }*/
-
+        //したレーン
         if (( Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0) ) 
-            && isGround)
+            && _isGround　&& _collider2d.enabled == true)
         {
-            if (whereLine == Line.Bottom)
+            if (_whereLine == Line.Bottom)
             {
                 Debug.Log("下");
-                Jump(botm_Jump);
-                whereLine = Line.Bottom;
+                Jump(_botmJump);
+                _whereLine = Line.Bottom;
             }
             else
             {
                 Debug.Log("上");
-                Jump(top_Jump);
-                whereLine = Line.Top;
+                Jump(_topJump);
+                _whereLine = Line.Top;
             }
-            collider2d.enabled = false;
-
+            _collider2d.enabled = false;
         }
 
         //collider2dがfalseならこの後の処理を実行
-        if (collider2d.enabled != false) return;
+        if (_collider2d.enabled != false) return;
         //下の線路にいた、ジャンプの最高到達点についたとき
-        if (whereLine == Line.Bottom && Highest_point())
+        if (_whereLine == Line.Bottom && IsHighestPoint())
         {
-            collider2d.enabled = true;
-            whereLine = Line.Top;
+            _whereLine = Line.Top;
+            _collider2d.enabled = true;
         }
         //
-        else if (whereLine == Line.Top && transform.position.y < -2f)
+        else if (_whereLine == Line.Top && transform.position.y < -2f)
         {
             //
-            collider2d.enabled = true;
-            whereLine = Line.Bottom;
+            _whereLine = Line.Bottom;
+            _collider2d.enabled = true;
         }   
     }
+
 
     /// <summary>
     /// 右に動く
     /// </summary>
     void Move()
     {
-        if (speed_elapsed_time > 6)
+        if (SpeedGage > 6)
         {
-            speed_elapsed_time = 6;
+            SpeedGage = 6;
         }
         else
         {
-            speed_elapsed_time += Time.deltaTime;
+            SpeedGage += Time.deltaTime;
+            Debug.Log(SpeedGage);
         }
         //FIXME:マジックナンバーを削除、数式の簡略化　初期スピード1 Maxスピード6 ゲージMaxまで６秒
-        rb.velocity = new Vector3(dash_speed * (speed_elapsed_time * 5/6 + 1f), rb.velocity.y);
+        _rb.velocity = new Vector3(_dashSpeed * (SpeedGage * 5/6 + 1f), _rb.velocity.y);
     }
 
     /// <summary>
@@ -127,30 +151,75 @@ public class PlayerAction : MonoBehaviour
     void Jump(float _jump_speed)
     {
         Debug.Log(_jump_speed);
-        rb.velocity = new Vector2(rb.velocity.x, _jump_speed);
+        _rb.velocity = new Vector2(_rb.velocity.x, _jump_speed);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    void Damage(int damage)
     {
-        if (other == null)
-        {
+        SetHealth(damage);
+        
+        Debug.Log(HpCurrent);
+        //進まないようにする
+        ControlLostTime = _knockBackTime;
 
+        SpeedGage = 0;
+        _rb.velocity = _knockBackPower;
+
+        //TODO:無敵○○秒、その時間点滅
+
+    }
+
+    //
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "enemy")
+        {
+            Destroy_or_Damage(_oneMeter, other);
+        }
+
+        if (other.gameObject.tag == "obstacle")
+        {
+            Destroy_or_Damage(_twoMeter,other);
         }
     }
 
     /// <summary>
+    /// メーターによってダメージを受けるか、相手を壊すかを判定する
+    /// </summary>
+    void Destroy_or_Damage(int meter , Collision2D other)
+    {
+        if (SpeedGage >= meter)
+        {
+            SpeedGage -= meter;
+            Destroy(other.gameObject);
+        }
+        else Damage(_damage1);
+    }
+
+    void SetHealth(int health)
+    {
+        HpCurrent -= health;
+
+        for (int i = 0; i < _imgHealth.Length; i++)
+        {
+            _imgHealth[i].enabled = i < HpCurrent;
+        }
+    }
+
+    //以下、可読性が良いか真偽の必要あり
+    /// <summary>
     /// ゴールに向かっている時　（ゴールしていない時）
     /// </summary>
-    bool Headed_goal()
+    bool IsHeadedGoal()
     {
-        return goal.position.x > transform.position.x;
+        return _goal.position.x > transform.position.x;
     }
     /// <summary>
     /// ジャンプした際の最高到達点
     /// </summary>
-    bool Highest_point()
+    bool IsHighestPoint()
     {
-        return rb.velocity.y <= 0;
+        return _rb.velocity.y <= 0;
     }
 
 }

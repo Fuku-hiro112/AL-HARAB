@@ -3,10 +3,10 @@ using UnityEngine.UI;
 
 public class GameDirector : MonoBehaviour
 {
-    Image speedGage;
-    Text timeText;
-    PlayerAction playerAction;
-    float speed;
+    Image _speedGage;
+    Text _timeText;
+    PlayerAction _playerAction;
+    float _speed;
 
     void Start()
     {
@@ -17,27 +17,24 @@ public class GameDirector : MonoBehaviour
     
     void Update()
     {
-        speed = playerAction.speed_elapsed_time;
-
-        speedGage.fillAmount = Speed_rate();
+        _speedGage.fillAmount = SpeedRate();
 
         //ì_êîÇï\é¶
-        timeText.text = PlayerAction.clear_time.ToString("F2");
+        _timeText.text = PlayerAction.ClearTime.ToString("F2");
     }
 
     
 
-    float Speed_rate()
+    float SpeedRate()
     {
-        float rate;
-        rate = speed/5;
-        return rate;
+        _speed = _playerAction.SpeedGage;
+        return _speed / 6;
     }
 
     void FindConponent()
     {
-        timeText = GameObject.Find("TimeText").GetComponent<Text>();
-        speedGage = GameObject.Find("SpeedGage").GetComponent<Image>();
-        playerAction = GameObject.Find("Player").GetComponent<PlayerAction>();
+        _timeText = GameObject.Find("TimeText").GetComponent<Text>();
+        _speedGage = GameObject.Find("SpeedGage").GetComponent<Image>();
+        _playerAction = GameObject.Find("Player").GetComponent<PlayerAction>();
     }
 }
