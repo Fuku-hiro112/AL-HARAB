@@ -64,7 +64,7 @@ public class PlayerAction : MonoBehaviour
         _canJump = Input.GetKeyDown(KeyCode.Space) && _isGround;
         bControl = ControlLostTime <= 0;
 
-        _isGround = _ground.IsGround();
+        _isGround = _ground.IsGroundJudg();
 
         //操作不可時間をカウントする
         if (ControlLostTime > 0)
@@ -91,18 +91,18 @@ public class PlayerAction : MonoBehaviour
             transform.rotation = new Quaternion(,,);
         }*/
         //したレーン
-        if (( Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0) ) 
-            && _isGround　&& _collider2d.enabled == true)
+        if (( Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0)) 
+            && _isGround && _collider2d.enabled == true)
         {
             if (_whereLine == Line.Bottom)
             {
-                Debug.Log("下");
+                //Debug.Log("下");
                 Jump(_botmJump);
                 _whereLine = Line.Bottom;
             }
             else
             {
-                Debug.Log("上");
+                //Debug.Log("上");
                 Jump(_topJump);
                 _whereLine = Line.Top;
             }
@@ -139,7 +139,7 @@ public class PlayerAction : MonoBehaviour
         else
         {
             SpeedGage += Time.deltaTime;
-            Debug.Log(SpeedGage);
+            //Debug.Log(SpeedGage);
         }
         //FIXME:マジックナンバーを削除、数式の簡略化　初期スピード1 Maxスピード6 ゲージMaxまで６秒
         _rb.velocity = new Vector3(_dashSpeed * (SpeedGage * 5/6 + 1f), _rb.velocity.y);
@@ -150,7 +150,7 @@ public class PlayerAction : MonoBehaviour
     /// </summary>
     void Jump(float _jump_speed)
     {
-        Debug.Log(_jump_speed);
+        //Debug.Log(_jump_speed);
         _rb.velocity = new Vector2(_rb.velocity.x, _jump_speed);
     }
 
@@ -158,7 +158,7 @@ public class PlayerAction : MonoBehaviour
     {
         SetHealth(damage);
         
-        Debug.Log(HpCurrent);
+        //Debug.Log(HpCurrent);
         //進まないようにする
         ControlLostTime = _knockBackTime;
 
@@ -170,6 +170,19 @@ public class PlayerAction : MonoBehaviour
     }
 
     //
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "enemy")
+        {
+            Destroy_or_Damage(_oneMeter, other);
+        }
+
+        if (other.gameObject.tag == "obstacle")
+        {
+            Destroy_or_Damage(_twoMeter, other);
+        }
+    }
+    /*
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "enemy")
@@ -181,19 +194,23 @@ public class PlayerAction : MonoBehaviour
         {
             Destroy_or_Damage(_twoMeter,other);
         }
-    }
+    }*/
 
     /// <summary>
     /// メーターによってダメージを受けるか、相手を壊すかを判定する
     /// </summary>
-    void Destroy_or_Damage(int meter , Collision2D other)
+    void Destroy_or_Damage(int meter , Collider2D other)
     {
         if (SpeedGage >= meter)
         {
             SpeedGage -= meter;
             Destroy(other.gameObject);
         }
-        else Damage(_damage1);
+        else
+        {
+            Damage(_damage1);
+            //15マス後ろから出現
+        }
     }
 
     void SetHealth(int health)

@@ -2,51 +2,51 @@ using UnityEngine;
 
 public class GroundCheck : MonoBehaviour
 {
-    private string groundTag = "Ground";
-    private bool isGround = false;
-    private bool isGroundEnter, isGroundStay, isGroundExit;
+    private string _groundTag = "Ground";
+    public bool _isGround = false;
+    private bool _isGroundEnter, _isGroundStay, _isGroundExit;
 
     //物理判定の更新毎に呼ぶ必要がある
     /// <summary>
     /// 地面に設置しているかを判定する
     /// </summary>
-    public bool IsGround()
+    public bool IsGroundJudg()
     {
-        if (isGroundEnter || isGroundStay)
+        if (_isGroundEnter || _isGroundStay)
         {
-            isGround = true;
+            _isGround = true;
         }
-        else if (isGroundExit)
+        else if (_isGroundExit)
         {
-            isGround = false;
+            _isGround = false;
         }
 
-        isGroundEnter = false;
-        isGroundStay = false;
-        isGroundExit = false;
+        _isGroundEnter = false;
+        _isGroundStay = false;
+        _isGroundExit = false;
 
-        return isGround;
+        return _isGround;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == groundTag)
+        if (other.tag == _groundTag)
         {
-            isGroundEnter = true;
+            _isGroundEnter = true;
         }
     }
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.tag == groundTag)
+        if (other.tag == _groundTag)
         {
-            isGroundStay = true;
+            _isGroundStay = true;
         }
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.tag == groundTag)
+        if (other.tag == _groundTag)
         {
-            isGroundExit = true;
+            _isGroundExit = true;
         }
     }
 }
