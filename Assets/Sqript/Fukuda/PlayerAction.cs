@@ -8,7 +8,6 @@ using UnityEngine.UI;
 /// </summary>
 public class PlayerAction : MonoBehaviour
 {
-    public float SpeedGage = 0;
     [SerializeField] float _dashSpeed = 1;
     [SerializeField] float _jumpPower = 2.5f;
     [SerializeField] float _topJump = 2.5f;
@@ -20,16 +19,15 @@ public class PlayerAction : MonoBehaviour
     public static int HpCurrent;
     public static float ClearTime;
 
+    public float SpeedGage = 0;
     public float ControlLostTime;
 
-    private bool _isGround = false;
-
-    bool bControl;
-    private bool _canJump;
+    private bool _isGround, bControl,_canJump;
 
     private GroundCheck _ground;
     private Rigidbody2D _rb;
-    private BoxCollider2D _collider2d;
+    private BoxCollider2D _playerCollid, _groundCollid;
+    private Transform _goal;
 
     private const int _oneMeter = 2;
     private const int _twoMeter = 4;
@@ -37,8 +35,6 @@ public class PlayerAction : MonoBehaviour
     private const int _damage1 = 1;
     private const int _damage2 = 2;
     private const int _damage3 = 3;
-
-    private Transform _goal;
 
     private Line _whereLine;
 
@@ -50,21 +46,19 @@ public class PlayerAction : MonoBehaviour
 
     void Start()
     {
+        GetComponent();
+
+        ControlLostTime = 0f;
         HpCurrent =  3;
         _whereLine = Line.Top;
-        _rb = GetComponent<Rigidbody2D>();
-        _ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
-        _goal = GameObject.Find("Goal").GetComponent<Transform>();
-        _collider2d = GetComponent<BoxCollider2D>();
-        ControlLostTime = 0f;
     }
 
     void Update()
     {
+        _isGround = _ground.IsGroundJudg();
         _canJump = Input.GetKeyDown(KeyCode.Space) && _isGround;
         bControl = ControlLostTime <= 0;
 
-        _isGround = _ground.IsGroundJudg();
 
         //操作不可時間をカウントする
         if (ControlLostTime > 0)
@@ -92,7 +86,7 @@ public class PlayerAction : MonoBehaviour
         }*/
         //したレーン
         if (( Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0)) 
-            && _isGround && _collider2d.enabled == true)
+            && _isGround && _playerCollid.enabled == true)
         {
             if (_whereLine == Line.Bottom)
             {
@@ -106,24 +100,27 @@ public class PlayerAction : MonoBehaviour
                 Jump(_topJump);
                 _whereLine = Line.Top;
             }
-            _collider2d.enabled = false;
+            _playerCollid.enabled = false;
+            _groundCollid.enabled = false;//火花が出ないようにfalseにしている
         }
 
         //collider2dがfalseならこの後の処理を実行
-        if (_collider2d.enabled != false) return;
-        //下の線路にいた、ジャンプの最高到達点についたとき
+        if (_playerCollid.enabled != false) return;
+        //下の線路にいたかつ、ジャンプの最高到達点についたとき
         if (_whereLine == Line.Bottom && IsHighestPoint())
         {
             _whereLine = Line.Top;
-            _collider2d.enabled = true;
+            _playerCollid.enabled = true;
+            _groundCollid.enabled = true;
         }
-        //
+        //上の線路にいたかつ、上の線路より下になったとき
         else if (_whereLine == Line.Top && transform.position.y < -2f)
         {
             //
             _whereLine = Line.Bottom;
-            _collider2d.enabled = true;
-        }   
+            _playerCollid.enabled = true;
+            _groundCollid.enabled = true;
+        }
     }
 
 
@@ -182,19 +179,6 @@ public class PlayerAction : MonoBehaviour
             Destroy_or_Damage(_twoMeter, other);
         }
     }
-    /*
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.tag == "enemy")
-        {
-            Destroy_or_Damage(_oneMeter, other);
-        }
-
-        if (other.gameObject.tag == "obstacle")
-        {
-            Destroy_or_Damage(_twoMeter,other);
-        }
-    }*/
 
     /// <summary>
     /// メーターによってダメージを受けるか、相手を壊すかを判定する
@@ -238,5 +222,12 @@ public class PlayerAction : MonoBehaviour
     {
         return _rb.velocity.y <= 0;
     }
-
+    void GetComponent()
+    {
+        _ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
+        _goal = GameObject.Find("Goal").GetComponent<Transform>();
+        _groundCollid = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
+        _rb = GetComponent<Rigidbody2D>();
+        _playerCollid = GetComponent<BoxCollider2D>();
+    }
 }
