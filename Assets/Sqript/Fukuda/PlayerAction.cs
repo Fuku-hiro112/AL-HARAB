@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
+using static System.Net.Mime.MediaTypeNames;
 
-/// <summary>
-/// private変数は　_を付けてcamelCasing（キャメルケース）を仕様する
-/// public変数は　A最初大文字　パスカル ケース(Pascal)
-/// ローカル変数は　
-/// </summary>
+
+// private変数は　_を付けてcamelCasing（キャメルケース）を仕様する
+// public変数は　A最初大文字　パスカル ケース(Pascal)
+// ローカル変数は　普通にcamelCasing（キャメルケース）
+
 public class PlayerAction : MonoBehaviour
 {
     [SerializeField] float _dashSpeed = 1;
@@ -13,21 +15,29 @@ public class PlayerAction : MonoBehaviour
     [SerializeField] float _topJump = 2.5f;
     [SerializeField] float _botmJump = 8.0f;
     [SerializeField] float _knockBackTime = 0.5f;
+    [SerializeField] float _changeJampCoolTime = 2f;
     [SerializeField] Vector2 _knockBackPower = new Vector2(-3f,5f);
-    [SerializeField] Image[] _imgHealth;
+    [SerializeField] UnityEngine.UI.Image[] _imgHealth;
 
     public static int HpCurrent;
     public static float ClearTime;
 
     public float SpeedGage = 0;
-    public float ControlLostTime;
 
-    private bool _isGround, bControl,_canJump;
+    private float _controlLostTime;
+    private float _chageJampLostTime;
+
+    private bool _isGround, _bControl,_canJump,_canChange;
 
     private GroundCheck _ground;
     private Rigidbody2D _rb;
     private BoxCollider2D _playerCollid, _groundCollid;
     private Transform _goal;
+
+    // LayerIDを取得
+    private int _topLineLayer;
+    private int _bottomLineLayer;
+    private int _playerLayer;
 
     private const int _oneMeter = 2;
     private const int _twoMeter = 4;
@@ -48,25 +58,35 @@ public class PlayerAction : MonoBehaviour
     {
         GetComponent();
 
-        ControlLostTime = 0f;
+        _controlLostTime = 0f;
+        _chageJampLostTime = 0f;
+
+        // LayerIDを取得
+        _topLineLayer = LayerMask.NameToLayer("TopLine");
+        _bottomLineLayer = LayerMask.NameToLayer("BottomLine");
+        _playerLayer = LayerMask.NameToLayer("Player");
+
+        LayerCollision(_topLineLayer,_bottomLineLayer,true);
+
         HpCurrent =  3;
         _whereLine = Line.Top;
     }
 
     void Update()
     {
+        //TODO:これどうにかしよう
         _isGround = _ground.IsGroundJudg();
+
         _canJump = Input.GetKeyDown(KeyCode.Space) && _isGround;
-        bControl = ControlLostTime <= 0;
+        _bControl = _controlLostTime <= 0;
+        _canChange = _chageJampLostTime <= 0;
 
 
-        //操作不可時間をカウントする
-        if (ControlLostTime > 0)
-        {
-            ControlLostTime -= Time.deltaTime;
-        }
+        //操作不可時間をカウントする　※参照型!!
+        ActionLostTime(ref _controlLostTime);//値が変わります
+        ActionLostTime(ref _chageJampLostTime);//値が変わります
 
-        if (bControl == true)
+        if (_bControl == true)
         {
             Move();
 
@@ -85,47 +105,73 @@ public class PlayerAction : MonoBehaviour
             transform.rotation = new Quaternion(,,);
         }*/
         //したレーン
-        if (( Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0)) 
-            && _isGround && _playerCollid.enabled == true)
+
+        if (CanChange())
         {
-            if (_whereLine == Line.Bottom)
+            if (_whereLine == Line.Bottom)//下レールにいる場合
             {
-                //Debug.Log("下");
+                //引数の値でジャンプする
                 Jump(_botmJump);
                 _whereLine = Line.Bottom;
             }
-            else
+            else//上レールにいる場合
             {
-                //Debug.Log("上");
+                //引数の値でジャンプする
                 Jump(_topJump);
                 _whereLine = Line.Top;
             }
-            _playerCollid.enabled = false;
-            _groundCollid.enabled = false;//火花が出ないようにfalseにしている
+            //
+            LayerCollision(_topLineLayer, _bottomLineLayer, false);
         }
 
         //collider2dがfalseならこの後の処理を実行
-        if (_playerCollid.enabled != false) return;
+        if (_groundCollid.enabled != false) return;
         //下の線路にいたかつ、ジャンプの最高到達点についたとき
         if (_whereLine == Line.Bottom && IsHighestPoint())
         {
             _whereLine = Line.Top;
-            _playerCollid.enabled = true;
-            _groundCollid.enabled = true;
+            LayerCollision(_topLineLayer, true);
         }
         //上の線路にいたかつ、上の線路より下になったとき
         else if (_whereLine == Line.Top && transform.position.y < -2f)
         {
             //
             _whereLine = Line.Bottom;
-            _playerCollid.enabled = true;
-            _groundCollid.enabled = true;
+            LayerCollision(_bottomLineLayer,true);
+        }
+        _chageJampLostTime = _changeJampCoolTime;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    void LayerCollision(int layer , bool display)
+    {
+        //falseだと表示なので表示する時はtrueになるよう分かりやすく !displayにした
+        Physics2D.IgnoreLayerCollision(_playerLayer ,layer, !display);
+
+        _groundCollid.enabled = display;//火花エフェクトが出ないようにfalseにしている
+    }
+    void LayerCollision(int layer1,int layer2, bool display)
+    {
+        Physics2D.IgnoreLayerCollision(_playerLayer, layer1, !display);
+        Physics2D.IgnoreLayerCollision(_playerLayer, layer2, !display);
+
+        _groundCollid.enabled = display;//火花エフェクトが出ないようにfalseにしている
+    }
+
+    /// <summary>
+    ///行動不可時間をカウントする
+    /// </summary>
+    void ActionLostTime(ref float lostTime)
+    {
+        if (lostTime > 0)
+        {
+            lostTime -= Time.deltaTime;
         }
     }
 
-
     /// <summary>
-    /// 右に動く
+    /// 自動で右に動く
     /// </summary>
     void Move()
     {
@@ -147,17 +193,19 @@ public class PlayerAction : MonoBehaviour
     /// </summary>
     void Jump(float _jump_speed)
     {
-        //Debug.Log(_jump_speed);
+        //どっちも変わらない？？
         _rb.velocity = new Vector2(_rb.velocity.x, _jump_speed);
+        //_rb.AddForce(transform.up * _jump_speed,ForceMode2D.Impulse);
     }
 
     void Damage(int damage)
     {
+        //damage分Hpを減らし、UIも更新
         SetHealth(damage);
         
         //Debug.Log(HpCurrent);
         //進まないようにする
-        ControlLostTime = _knockBackTime;
+        _controlLostTime = _knockBackTime;
 
         SpeedGage = 0;
         _rb.velocity = _knockBackPower;
@@ -166,16 +214,17 @@ public class PlayerAction : MonoBehaviour
 
     }
 
-    //
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "enemy")
         {
+            //敵ならメーターを1つ使う
             Destroy_or_Damage(_oneMeter, other);
         }
 
         if (other.gameObject.tag == "obstacle")
         {
+            //障害物ならメーターを2つ使う
             Destroy_or_Damage(_twoMeter, other);
         }
     }
@@ -185,6 +234,7 @@ public class PlayerAction : MonoBehaviour
     /// </summary>
     void Destroy_or_Damage(int meter , Collider2D other)
     {
+        //meterよりスピードゲージが溜まっていると
         if (SpeedGage >= meter)
         {
             SpeedGage -= meter;
@@ -193,10 +243,12 @@ public class PlayerAction : MonoBehaviour
         else
         {
             Damage(_damage1);
-            //15マス後ろから出現
+            //TODO:15マス後ろから出現
         }
     }
-
+    /// <summary>
+    /// 残機を減らし、UIにも反映する
+    /// </summary>
     void SetHealth(int health)
     {
         HpCurrent -= health;
@@ -222,6 +274,15 @@ public class PlayerAction : MonoBehaviour
     {
         return _rb.velocity.y <= 0;
     }
+    /// <summary>
+    /// 線路切り替えが出来るかどうか
+    /// </summary>
+    bool CanChange()
+    {
+        bool btnPush = (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0));
+        return btnPush && _isGround && _playerCollid.enabled == true && _canChange;
+    }
+
     void GetComponent()
     {
         _ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();

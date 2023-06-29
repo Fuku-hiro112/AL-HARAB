@@ -3,7 +3,7 @@ using UnityEngine;
 public class GroundCheck : MonoBehaviour
 {
     private string _groundTag = "Ground";
-    public bool _isGround = false;
+    private bool _isGround = false;//IsGroundJugeをUpdateでやって、これをstatidにして呼び出すと軽くなる説
     private bool _isGroundEnter, _isGroundStay, _isGroundExit;
 
     //物理判定の更新毎に呼ぶ必要がある
