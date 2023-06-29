@@ -141,22 +141,23 @@ public class PlayerAction : MonoBehaviour
         }
         _chageJampLostTime = _changeJampCoolTime;
     }
+
     /// <summary>
-    /// 
+    /// Playerとの当たり判定を操作する
     /// </summary>
-    void LayerCollision(int layer , bool display)
+    void LayerCollision(int layer , bool display)// layerには、判定操作するLayerを　displayには表示するかしないかを
     {
         //falseだと表示なので表示する時はtrueになるよう分かりやすく !displayにした
         Physics2D.IgnoreLayerCollision(_playerLayer ,layer, !display);
 
         _groundCollid.enabled = display;//火花エフェクトが出ないようにfalseにしている
-    }
+    }//引数違いのオーバーロード↓　2つ判定操作する際に使う
     void LayerCollision(int layer1,int layer2, bool display)
     {
         Physics2D.IgnoreLayerCollision(_playerLayer, layer1, !display);
         Physics2D.IgnoreLayerCollision(_playerLayer, layer2, !display);
 
-        _groundCollid.enabled = display;//火花エフェクトが出ないようにfalseにしている
+        _groundCollid.enabled = display;
     }
 
     /// <summary>
