@@ -1,7 +1,5 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using static System.Net.Mime.MediaTypeNames;
 
 
 // private変数は　_を付けてcamelCasing（キャメルケース）を仕様する
@@ -29,6 +27,7 @@ public class PlayerAction : MonoBehaviour
 
     private bool _isGround, _bControl,_canJump,_canChange;
 
+    private CoinAction _coinAction;
     private GroundCheck _ground;
     private Rigidbody2D _rb;
     private BoxCollider2D _playerCollid, _groundCollid;
@@ -199,7 +198,7 @@ public class PlayerAction : MonoBehaviour
         //_rb.AddForce(transform.up * _jump_speed,ForceMode2D.Impulse);
     }
 
-    void Damage(int damage)
+    async void Damage(int damage)
     {
         //damage分Hpを減らし、UIも更新
         SetHealth(damage);
@@ -213,6 +212,8 @@ public class PlayerAction : MonoBehaviour
 
         //TODO:無敵○○秒、その時間点滅
 
+        var ct = this.GetCancellationTokenOnDestroy();
+        await _coinAction.AsyncCoinParticle(_controlLostTime, ct);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -288,6 +289,7 @@ public class PlayerAction : MonoBehaviour
     {
         _ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
         _goal = GameObject.Find("Goal").GetComponent<Transform>();
+        _coinAction = GameObject.Find("CoinParticle").GetComponent<CoinAction>();
         _groundCollid = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
         _rb = GetComponent<Rigidbody2D>();
         _playerCollid = GetComponent<BoxCollider2D>();

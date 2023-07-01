@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.ParticleSystem;
 
@@ -33,7 +30,7 @@ public class SparkAction : MonoBehaviour
 
         if (_isGround)
         {
-            // EmissionのRateOverTimeの値を更新
+            //ParticleのEmissionのRateOverTimeの値を更新
             _emissionModule.rateOverTime = _speed / 6 * 15;
 
         }
@@ -44,9 +41,6 @@ public class SparkAction : MonoBehaviour
 
         _speed = _playerAction.SpeedGage;
 
-        Debug.Log(_speed);
-
-        //TODO:GroundCheckが反応しているので線路切り替え時はCollider２Dをオフにする
         //GroundCheckのスクリプトを理解する
     }
 }
