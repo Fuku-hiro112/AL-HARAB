@@ -3,9 +3,11 @@ using UnityEngine;
 public class GroundCheck : MonoBehaviour
 {
     private string _groundTag = "Ground";
-    private bool _isGround = false;//IsGroundJugeをUpdateでやって、これをstatidにして呼び出すと軽くなる説
+    public bool IsGround;//IsGroundJugeをUpdateでやって、これをstatidにして呼び出すと軽くなる説
+    /*
     private bool _isGroundEnter, _isGroundStay, _isGroundExit;
-
+    */
+    /*
     //物理判定の更新毎に呼ぶ必要がある
     /// <summary>
     /// 地面に設置しているかを判定する
@@ -26,27 +28,30 @@ public class GroundCheck : MonoBehaviour
         _isGroundExit = false;
 
         return _isGround;
+    }*/
+    private void Start()
+    {
+        IsGround = false;
     }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == _groundTag)
         {
-            _isGroundEnter = true;
+            IsGround = true;
         }
     }
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.tag == _groundTag)
         {
-            _isGroundStay = true;
+            IsGround = true;
         }
     }
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.tag == _groundTag)
         {
-            _isGroundExit = true;
+            IsGround = false;
         }
     }
 }

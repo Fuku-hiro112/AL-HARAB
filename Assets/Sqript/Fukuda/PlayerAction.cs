@@ -1,4 +1,7 @@
 using Cysharp.Threading.Tasks;
+using System;
+using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -12,45 +15,66 @@ public class PlayerAction : MonoBehaviour
     [SerializeField] float _jumpPower = 2.5f;
     [SerializeField] float _topJump = 2.5f;
     [SerializeField] float _botmJump = 8.0f;
-    [SerializeField] float _knockBackTime = 0.5f;
+    [SerializeField] float _knockBackTime = 2.0f;
     [SerializeField] float _changeJampCoolTime = 2f;
     [SerializeField] Vector2 _knockBackPower = new Vector2(-3f,5f);
     [SerializeField] UnityEngine.UI.Image[] _imgHealth;
+    [SerializeField] float _firstSpeed = 1.0f;
+    [SerializeField] int _flashingInterval = 100;
+    [SerializeField] int _loopCount = 10;
 
     public static int HpCurrent;
     public static float ClearTime;
 
     public float SpeedGage = 0;
 
+    private float posX;
     private float _controlLostTime;
     private float _chageJampLostTime;
+    //float _time = 0f;
 
-    private bool _isGround, _bControl,_canJump,_canChange;
+    private bool _isGround, _bControl,_canJump,_canChange,_isFalling;
 
     private CoinAction _coinAction;
     private GroundCheck _ground;
     private Rigidbody2D _rb;
     private BoxCollider2D _playerCollid, _groundCollid;
     private Transform _goal;
+    private SpriteRenderer _spriteRenderer;
 
     // LayerIDを取得
     private int _topLineLayer;
     private int _bottomLineLayer;
     private int _playerLayer;
 
+    private const int _offScreen = -7;
+
     private const int _oneMeter = 2;
     private const int _twoMeter = 4;
 
-    private const int _damage1 = 1;
-    private const int _damage2 = 2;
-    private const int _damage3 = 3;
+    private const int _oneDamage = 1;
+    private const int _twoDamage = 2;
+    private const int _threeDamage = 3;
 
     private Line _whereLine;
-
+    public STATE State;
+    private GameMode _mode;
     enum Line
     {
         Top,
         Bottom
+    }
+    public enum STATE
+    {
+        NOMAL,
+        DAMAGED,
+        DEATH
+    }
+    enum GameMode
+    {
+        Play,
+        GameOver,
+        GameCrear
     }
 
     void Start()
@@ -67,30 +91,20 @@ public class PlayerAction : MonoBehaviour
 
         LayerCollision(_topLineLayer,_bottomLineLayer,true);
 
+        _isFalling = false;
         HpCurrent =  3;
+        State = STATE.NOMAL;
         _whereLine = Line.Top;
+        _mode = GameMode.Play;
     }
 
-    void Update()
+    async void Update()
     {
-        //TODO:これどうにかしよう
-        _isGround = _ground.IsGroundJudg();
+        if (State == STATE.DEATH) _mode = GameMode.GameOver;
 
-        _canJump = Input.GetKeyDown(KeyCode.Space) && _isGround;
+        _canJump = Input.GetKeyDown(KeyCode.Space) && _ground.IsGround;
         _bControl = _controlLostTime <= 0;
-        _canChange = _chageJampLostTime <= 0;
-
-
-        //操作不可時間をカウントする　※参照型!!
-        ActionLostTime(ref _controlLostTime);//値が変わります
-        ActionLostTime(ref _chageJampLostTime);//値が変わります
-
-        if (_bControl == true)
-        {
-            Move();
-
-            if (_canJump) Jump(_jumpPower);
-        }
+        _canChange = _chageJampLostTime <= 0; //HACK: 関数とか使って分かりやすく出来ないかな？
 
         if (IsHeadedGoal())//ゴールするまで
         {
@@ -103,42 +117,39 @@ public class PlayerAction : MonoBehaviour
         {
             transform.rotation = new Quaternion(,,);
         }*/
-        //したレーン
 
-        if (CanChange())
+        //落下判定
+        if (transform.position.y <= _offScreen)
         {
-            if (_whereLine == Line.Bottom)//下レールにいる場合
-            {
-                //引数の値でジャンプする
-                Jump(_botmJump);
-                _whereLine = Line.Bottom;
-            }
-            else//上レールにいる場合
-            {
-                //引数の値でジャンプする
-                Jump(_topJump);
-                _whereLine = Line.Top;
-            }
-            //
-            LayerCollision(_topLineLayer, _bottomLineLayer, false);
+            transform.position = new Vector2(posX, _offScreen);
+            
+            if (_isFalling) return;
+            _isFalling = true;
+            Damage(_oneDamage);
+            var ct = this.GetCancellationTokenOnDestroy();
+            await AsyncFall(ct);
+
+        }
+        else
+        {
+            posX = transform.position.x;
         }
 
-        //collider2dがfalseならこの後の処理を実行
-        if (_groundCollid.enabled != false) return;
-        //下の線路にいたかつ、ジャンプの最高到達点についたとき
-        if (_whereLine == Line.Bottom && IsHighestPoint())
+        //HACK: 参照型使いたくないなぁ
+        //操作不可時間をカウントする ※参照型!! 
+        ActionLostTime(ref _controlLostTime, ref _chageJampLostTime);//値が変わります
+
+        if (State != STATE.NOMAL) return;
+        if (_bControl)
         {
-            _whereLine = Line.Top;
-            LayerCollision(_topLineLayer, true);
+            Move();
+
+            if (_canJump) Jump(_jumpPower);
         }
-        //上の線路にいたかつ、上の線路より下になったとき
-        else if (_whereLine == Line.Top && transform.position.y < -2f)
-        {
-            //
-            _whereLine = Line.Bottom;
-            LayerCollision(_bottomLineLayer,true);
-        }
-        _chageJampLostTime = _changeJampCoolTime;
+
+        LineChange();
+
+
     }
 
     /// <summary>
@@ -162,11 +173,23 @@ public class PlayerAction : MonoBehaviour
     /// <summary>
     ///行動不可時間をカウントする
     /// </summary>
-    void ActionLostTime(ref float lostTime)
+    float ActionLostTime(float lostTime)
     {
         if (lostTime > 0)
         {
             lostTime -= Time.deltaTime;
+        }
+        return lostTime;
+    }
+    void ActionLostTime(ref float lostTime1,ref float lostTime2)
+    {
+        if (lostTime1 > 0)
+        {
+            lostTime1 -= Time.deltaTime;
+        }
+        if (lostTime2 > 0)
+        {
+            lostTime2 -= Time.deltaTime;
         }
     }
 
@@ -175,6 +198,8 @@ public class PlayerAction : MonoBehaviour
     /// </summary>
     void Move()
     {
+        float elapsed = SpeedGage * 5 / 6;
+
         if (SpeedGage > 6)
         {
             SpeedGage = 6;
@@ -182,10 +207,9 @@ public class PlayerAction : MonoBehaviour
         else
         {
             SpeedGage += Time.deltaTime;
-            //Debug.Log(SpeedGage);
         }
-        //FIXME:マジックナンバーを削除、数式の簡略化　初期スピード1 Maxスピード6 ゲージMaxまで６秒
-        _rb.velocity = new Vector3(_dashSpeed * (SpeedGage * 5/6 + 1f), _rb.velocity.y);
+        //初期スピード1 Maxスピード6 ゲージMaxまで６秒
+        _rb.velocity = new Vector3(_dashSpeed * (elapsed + _firstSpeed), _rb.velocity.y);
     }
 
     /// <summary>
@@ -197,24 +221,114 @@ public class PlayerAction : MonoBehaviour
         _rb.velocity = new Vector2(_rb.velocity.x, _jump_speed);
         //_rb.AddForce(transform.up * _jump_speed,ForceMode2D.Impulse);
     }
-
-    async void Damage(int damage)
+    /// <summary>
+    /// 画面下に落ちた時の処理
+    /// </summary>
+    async UniTask AsyncFall(CancellationToken ct)
     {
-        //damage分Hpを減らし、UIも更新
-        SetHealth(damage);
-        
-        //Debug.Log(HpCurrent);
-        //進まないようにする
-        _controlLostTime = _knockBackTime;
+        if (State == STATE.DEATH)//死んでるなら
+        {
+            _mode = GameMode.GameOver;
+            return;
+        }
+
+        await UniTask.Delay(_flashingInterval * 2 * _loopCount, cancellationToken: ct);
 
         SpeedGage = 0;
-        _rb.velocity = _knockBackPower;
 
-        //TODO:無敵○○秒、その時間点滅
-
-        var ct = this.GetCancellationTokenOnDestroy();
-        await _coinAction.AsyncCoinParticle(_controlLostTime, ct);
+        if (_whereLine == Line.Bottom)
+        {
+            //TODO:ポジション調べます
+            transform.position += new Vector3(-15, 7, 0); //-15 マス　下は-4
+            Debug.Log("動いた");
+        }
+        else
+        {
+            transform.position += new Vector3(-15, 11, 0);//-15 マス　上は１
+        }
+        _isFalling = false;
     }
+
+    /// <summary>
+    /// 線路を変更する
+    /// </summary>
+    void LineChange()
+    {
+        //
+        if (CanChange())
+        {
+            if (_whereLine == Line.Bottom)//下レールにいる場合
+            {
+                //引数の値でジャンプする
+                Jump(_botmJump);
+                _whereLine = Line.Bottom;
+            }
+            else//上レールにいる場合
+            {
+                //引数の値でジャンプする
+                Jump(_topJump);
+                _whereLine = Line.Top;
+            }
+            //上と下の線路の当たり判定を無視する
+            LayerCollision(_topLineLayer, _bottomLineLayer, false);
+        }
+
+        //collider2dがfalseならこの後の処理を実行
+        if (_groundCollid.enabled != false) return; //NOTE: != false の方が見やすい？？
+        //下の線路にいたかつ、ジャンプの最高到達点についたとき
+        if (_whereLine == Line.Bottom && IsHighestPoint())
+        {
+            _whereLine = Line.Top;
+            LayerCollision(_topLineLayer, true);//上の線路に当たるようにする
+
+        }//上の線路にいたかつ、上の線路より下になったとき
+        else if (_whereLine == Line.Top && transform.position.y < -2f)
+        {
+            _whereLine = Line.Bottom;
+            LayerCollision(_bottomLineLayer, true);//下の線路に当たるようにする
+        }
+        //線路切り替えのクールタイムを代入している
+        _chageJampLostTime = _changeJampCoolTime;
+    }
+
+//以下、可読性が良いか真偽の必要あり-----bool値---------------------------------------------
+    /// <summary>
+    /// ゴールに向かっている時　（ゴールしていない時）
+    /// </summary>
+    bool IsHeadedGoal()
+    {
+        return _goal.position.x > transform.position.x;
+    }
+    /// <summary>
+    /// ジャンプした際の最高到達点
+    /// </summary>
+    bool IsHighestPoint()
+    {
+        return _rb.velocity.y <= 0;
+    }
+    /// <summary>
+    /// 線路切り替えが出来るかどうか
+    /// </summary>
+    bool CanChange()
+    {
+          bool btnPush = (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0));
+        return btnPush && _ground.IsGround && _playerCollid.enabled == true && _canChange;
+    }
+    /// <summary>
+    /// GetCompornentするものを入れている
+    /// </summary>
+    void GetComponent()
+    {
+        _ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
+        _goal = GameObject.Find("Goal").GetComponent<Transform>();
+        _coinAction = GameObject.Find("CoinParticle").GetComponent<CoinAction>();
+        _groundCollid = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
+        _rb = GetComponent<Rigidbody2D>();
+        _playerCollid = GetComponent<BoxCollider2D>();
+        _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+    }
+
+//-----------当たった時のメソッド------------------------------------------------------------------------------------
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -240,12 +354,63 @@ public class PlayerAction : MonoBehaviour
         if (SpeedGage >= meter)
         {
             SpeedGage -= meter;
-            Destroy(other.gameObject);
+            other.gameObject.SetActive(false);
         }
         else
         {
-            Damage(_damage1);
-            //TODO:15マス後ろから出現
+            if (State != STATE.NOMAL) return;
+            State = STATE.DAMAGED;
+            //ダメージを受けた処理　引数にはダメージを受けた値を
+            Damage(_oneDamage);
+            KnockBack();
+        }
+    }
+    /// <summary>
+    /// 敵に当たってダメージを受けた時の処理
+    /// </summary>
+    void Damage(int damage, Action action = null)//HACK:Actionは試しに付けただけ
+    {
+        //damage分Hpを減らし、UIも更新
+        SetHealth(damage);
+
+        //Debug.Log(HpCurrent);
+
+        SpeedGage = 0;
+
+        //IsDeath = HpCurrent <= 0;
+        if(HpCurrent<=0)State = STATE.DEATH;
+
+        action?.Invoke();//HACK: 試しに付けただけ
+    }
+    /// <summary>
+    /// ノックバック処理
+    /// </summary>
+    async void KnockBack()
+    {
+        //進まないようにする
+        _controlLostTime = _knockBackTime;
+
+        //velocityで後ろにノックバックする
+        _rb.velocity = _knockBackPower;//NOTE: new vector2でそのまま書いた方が分かりやすい？
+
+        _coinAction.CoinParticle();
+        
+        //生死判定
+        if (State == STATE.DEATH)//後ろにノックバックしてからそのまま落ちるようにしたいのでUpdateに書こうかなぁ？
+        {
+            //真下に落下してGameOverにしたいので当たり判定を消している
+            _playerCollid.enabled = false;
+
+            //TODO: アニメーション
+        }
+        else
+        {
+            var ct = this.GetCancellationTokenOnDestroy();
+            await AsyncFlash(ct);//点滅する
+
+            //15マス後ろに行く
+            transform.position += new Vector3(-15, 1, 0);
+            State = STATE.NOMAL;
         }
     }
     /// <summary>
@@ -260,38 +425,23 @@ public class PlayerAction : MonoBehaviour
             _imgHealth[i].enabled = i < HpCurrent;
         }
     }
+    /// <summary>
+    /// 点滅する処理
+    /// </summary>
+    async UniTask AsyncFlash(CancellationToken ct)
+    {
+        for (int i = 0; i < _loopCount; i++)
+        {
+            Debug.Log(_spriteRenderer.color.a);
 
-    //以下、可読性が良いか真偽の必要あり
-    /// <summary>
-    /// ゴールに向かっている時　（ゴールしていない時）
-    /// </summary>
-    bool IsHeadedGoal()
-    {
-        return _goal.position.x > transform.position.x;
-    }
-    /// <summary>
-    /// ジャンプした際の最高到達点
-    /// </summary>
-    bool IsHighestPoint()
-    {
-        return _rb.velocity.y <= 0;
-    }
-    /// <summary>
-    /// 線路切り替えが出来るかどうか
-    /// </summary>
-    bool CanChange()
-    {
-        bool btnPush = (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0));
-        return btnPush && _isGround && _playerCollid.enabled == true && _canChange;
+            _spriteRenderer.color += new Color(0,0,0,-100);
+            await UniTask.Delay(_flashingInterval, cancellationToken:ct);
+
+            Debug.Log(i+"回目");
+
+            _spriteRenderer.color += new Color(0,0,0,100);
+            await UniTask.Delay(_flashingInterval, cancellationToken:ct);
+        }
     }
 
-    void GetComponent()
-    {
-        _ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
-        _goal = GameObject.Find("Goal").GetComponent<Transform>();
-        _coinAction = GameObject.Find("CoinParticle").GetComponent<CoinAction>();
-        _groundCollid = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
-        _rb = GetComponent<Rigidbody2D>();
-        _playerCollid = GetComponent<BoxCollider2D>();
-    }
 }

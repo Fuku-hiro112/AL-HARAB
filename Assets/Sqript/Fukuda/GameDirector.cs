@@ -17,10 +17,17 @@ public class GameDirector : MonoBehaviour
     
     void Update()
     {
-        _speedGage.fillAmount = SpeedRate();
+        if (_playerAction == null)
+        {
+            Debug.Log("nullです");
+        }
+        else
+        {
+            _speedGage.fillAmount = SpeedRate();
 
-        //点数を表示
-        _timeText.text = PlayerAction.ClearTime.ToString("F2");
+            //点数を表示
+            _timeText.text = PlayerAction.ClearTime.ToString("F2");
+        }
     }
 
     

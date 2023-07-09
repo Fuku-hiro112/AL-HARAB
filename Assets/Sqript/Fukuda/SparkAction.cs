@@ -24,9 +24,7 @@ public class SparkAction : MonoBehaviour
     }
     void Update()
     {
-        _isGround = _ground.IsGroundJudg();
-
-        Debug.Log(_isGround);
+        _isGround = _ground.IsGround;
 
         if (_isGround)
         {

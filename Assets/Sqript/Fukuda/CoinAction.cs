@@ -20,13 +20,11 @@ public class CoinAction : MonoBehaviour
         
     }
 
-    public async UniTask AsyncCoinParticle(float nockBack, CancellationToken ct = default)
+    public void CoinParticle()
     {
         transform.position = _coinPos.position;
         _particle.Play();
 
-        await UniTask.Delay(TimeSpan.FromSeconds(nockBack));
-
-        _particle.Stop();
+        //await UniTask.Delay(TimeSpan.FromSeconds(nockBack));
     }
 }
