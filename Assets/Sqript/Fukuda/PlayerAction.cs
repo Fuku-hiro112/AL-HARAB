@@ -31,9 +31,8 @@ public class PlayerAction : MonoBehaviour
     private float posX;
     private float _controlLostTime;
     private float _chageJampLostTime;
-    //float _time = 0f;
 
-    private bool _isGround, _bControl,_canJump,_canChange,_isFalling;
+    private bool _bControl,_canJump,_canChange,_isFalling;
 
     private CoinAction _coinAction;
     private GroundCheck _ground;
@@ -89,7 +88,9 @@ public class PlayerAction : MonoBehaviour
         _bottomLineLayer = LayerMask.NameToLayer("BottomLine");
         _playerLayer = LayerMask.NameToLayer("Player");
 
-        LayerCollision(_topLineLayer,_bottomLineLayer,true);
+        //FIXDME: この2つの順番を上下変えたりすると_bottomもtureになってしまう
+        LayerCollision(_bottomLineLayer, false);
+        LayerCollision(_topLineLayer,true);
 
         _isFalling = false;
         HpCurrent =  3;
@@ -102,6 +103,8 @@ public class PlayerAction : MonoBehaviour
     {
         if (State == STATE.DEATH) _mode = GameMode.GameOver;
 
+        Debug.Log(_ground.IsGround);
+
         _canJump = Input.GetKeyDown(KeyCode.Space) && _ground.IsGround;
         _bControl = _controlLostTime <= 0;
         _canChange = _chageJampLostTime <= 0; //HACK: 関数とか使って分かりやすく出来ないかな？
@@ -112,6 +115,23 @@ public class PlayerAction : MonoBehaviour
             ClearTime += Time.deltaTime;
         }
 
+        if (_ground.IsGround)
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        else if (_rb.velocity.y > 0.2)
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 45);
+        }
+        else if (_rb.velocity.y < -0.2)
+        {
+            transform.rotation = Quaternion.Euler(0, 0, -45);
+        }
+        else
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        //_rb.velocity
         //TODO:ジャンプによって角度が変わる
         /*if (jumped)
         {
@@ -121,8 +141,8 @@ public class PlayerAction : MonoBehaviour
         //落下判定
         if (transform.position.y <= _offScreen)
         {
-            transform.position = new Vector2(posX, _offScreen);
-            
+            _rb.constraints = RigidbodyConstraints2D.FreezePosition;
+
             if (_isFalling) return;
             _isFalling = true;
             Damage(_oneDamage);
@@ -130,13 +150,8 @@ public class PlayerAction : MonoBehaviour
             await AsyncFall(ct);
 
         }
-        else
-        {
-            posX = transform.position.x;
-        }
 
-        //HACK: 参照型使いたくないなぁ
-        //操作不可時間をカウントする ※参照型!! 
+        //操作不可時間をカウントする ※参照型!!                      //HACK: 参照型使いたくないなぁ
         ActionLostTime(ref _controlLostTime, ref _chageJampLostTime);//値が変わります
 
         if (State != STATE.NOMAL) return;
@@ -217,9 +232,7 @@ public class PlayerAction : MonoBehaviour
     /// </summary>
     void Jump(float _jump_speed)
     {
-        //どっちも変わらない？？
         _rb.velocity = new Vector2(_rb.velocity.x, _jump_speed);
-        //_rb.AddForce(transform.up * _jump_speed,ForceMode2D.Impulse);
     }
     /// <summary>
     /// 画面下に落ちた時の処理
@@ -239,13 +252,15 @@ public class PlayerAction : MonoBehaviour
         if (_whereLine == Line.Bottom)
         {
             //TODO:ポジション調べます
-            transform.position += new Vector3(-15, 7, 0); //-15 マス　下は-4
+            transform.position += new Vector3(-15, 5, 0); //-15 マス　下は-4
+            
             Debug.Log("動いた");
         }
         else
         {
-            transform.position += new Vector3(-15, 11, 0);//-15 マス　上は１
+            transform.position += new Vector3(-15, 8, 0);//-15 マス　上は１
         }
+        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         _isFalling = false;
     }
 

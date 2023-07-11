@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 27229006}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: SparkPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -780,7 +780,7 @@ GameObject:
   - component: {fileID: 183412521}
   - component: {fileID: 183412520}
   - component: {fileID: 183412519}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: (kari)Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6010,7 +6010,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 432410854}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: CoinPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6480,7 +6480,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 641317346}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 17396319092e00f45b8ab4a730c6abc7, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -6576,7 +6576,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 641317346}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6, y: 0, z: 0}
+  m_LocalPosition: {x: -6, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19399,7 +19399,7 @@ GameObject:
   - component: {fileID: 1375502491}
   - component: {fileID: 1375502493}
   - component: {fileID: 1375502494}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19478,7 +19478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97a1ef7fbfa869844ad8fe846d42e7bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsGround: 0
+  IsGround: 1
 --- !u!1 &1378632239
 GameObject:
   m_ObjectHideFlags: 0
