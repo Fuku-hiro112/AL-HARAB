@@ -131,7 +131,7 @@ public class PlayerAction : MonoBehaviour
 
         }
 
-        //ダメージを受けている最中地面に着いたとき動かないようにする
+        //ノックバックした後止まる
         if (State == STATE.DAMAGED)
         {
             if (_rb.velocity.y > 0) return;
@@ -145,11 +145,12 @@ public class PlayerAction : MonoBehaviour
         if (State != STATE.NOMAL) return;
         if (_bControl)
         {
+            //右へ移動する
             Move();
-
+            //ジャンプする
             if (_canJump) Jump(_jumpPower);
         }
-
+        //ジャンプしてレールを切り替える
         LineChange();
     }
 

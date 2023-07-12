@@ -3,7 +3,7 @@ using UnityEngine;
 public class FollowObj : MonoBehaviour
 {
     [SerializeField] Transform _followObj;
-    private int _diffBackGroundX = 6; //Playerとの距離の差　（diff = difference）
+    private int _diffBackGroundX = 4; //Playerとの距離の差　（diff = difference）
     //Transform _sparkPos;
 
     public enum ObjName
