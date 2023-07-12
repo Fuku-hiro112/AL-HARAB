@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -12,12 +11,12 @@ using UnityEngine;
 public class PlayerAction : MonoBehaviour
 {
     [SerializeField] float _dashSpeed = 1;
-    [SerializeField] float _jumpPower = 2.5f;
+    [SerializeField] float _jumpPower = 4.0f;
     [SerializeField] float _topJump = 2.5f;
-    [SerializeField] float _botmJump = 8.0f;
-    [SerializeField] float _knockBackTime = 2.0f;
-    [SerializeField] float _changeJampCoolTime = 2f;
-    [SerializeField] Vector2 _knockBackPower = new Vector2(-3f,5f);
+    [SerializeField] float _botmJump = 9.0f;
+    [SerializeField] float _knockBackTime = 1.0f;
+    [SerializeField] float _changeJampCoolTime = 2.0f;
+    [SerializeField] Vector2 _knockBackPower = new Vector2(-3f,3f);
     [SerializeField] UnityEngine.UI.Image[] _imgHealth;
     [SerializeField] float _firstSpeed = 1.0f;
     [SerializeField] int _flashingInterval = 100;
@@ -26,7 +25,7 @@ public class PlayerAction : MonoBehaviour
     public static int HpCurrent;
     public static float ClearTime;
 
-    public float SpeedGage = 0;
+    [NonSerialized] public float SpeedGage = 0;
 
     private float posX;
     private float _controlLostTime;
@@ -34,27 +33,28 @@ public class PlayerAction : MonoBehaviour
 
     private bool _bControl,_canJump,_canChange,_isFalling;
 
-    private CoinAction _coinAction;
-    private GroundCheck _ground;
+    private Animator _animator;
     private Rigidbody2D _rb;
     private BoxCollider2D _playerCollid, _groundCollid;
     private Transform _goal;
     private SpriteRenderer _spriteRenderer;
 
+    //スクリプト系
+    private CoinAction _coinAction;
+    private GroundCheck _ground;
+
     // LayerIDを取得
     private int _topLineLayer;
     private int _bottomLineLayer;
     private int _playerLayer;
-
+    
+    //定数
     private const int _offScreen = -7;
-
     private const int _oneMeter = 2;
     private const int _twoMeter = 4;
-
     private const int _oneDamage = 1;
-    private const int _twoDamage = 2;
-    private const int _threeDamage = 3;
 
+    //enum系
     private Line _whereLine;
     public STATE State;
     private GameMode _mode;
@@ -101,6 +101,9 @@ public class PlayerAction : MonoBehaviour
 
     async void Update()
     {
+        _animator.SetFloat("AirSpeedY", _rb.velocity.y);
+        _animator.SetBool("IsGround", _ground.IsGround);
+
         if (State == STATE.DEATH) _mode = GameMode.GameOver;
 
         Debug.Log(_ground.IsGround);
@@ -115,29 +118,6 @@ public class PlayerAction : MonoBehaviour
             ClearTime += Time.deltaTime;
         }
 
-        if (_ground.IsGround)
-        {
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-        }
-        else if (_rb.velocity.y > 0.2)
-        {
-            transform.rotation = Quaternion.Euler(0, 0, 45);
-        }
-        else if (_rb.velocity.y < -0.2)
-        {
-            transform.rotation = Quaternion.Euler(0, 0, -45);
-        }
-        else
-        {
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-        }
-        //_rb.velocity
-        //TODO:ジャンプによって角度が変わる
-        /*if (jumped)
-        {
-            transform.rotation = new Quaternion(,,);
-        }*/
-
         //落下判定
         if (transform.position.y <= _offScreen)
         {
@@ -149,6 +129,14 @@ public class PlayerAction : MonoBehaviour
             var ct = this.GetCancellationTokenOnDestroy();
             await AsyncFall(ct);
 
+        }
+
+        //ダメージを受けている最中地面に着いたとき動かないようにする
+        if (State == STATE.DAMAGED)
+        {
+            if (_rb.velocity.y > 0) return;
+            if (!_ground.IsGround) return;
+            _rb.velocity = Vector2.zero;
         }
 
         //操作不可時間をカウントする ※参照型!!                      //HACK: 参照型使いたくないなぁ
@@ -163,8 +151,6 @@ public class PlayerAction : MonoBehaviour
         }
 
         LineChange();
-
-
     }
 
     /// <summary>
@@ -232,8 +218,10 @@ public class PlayerAction : MonoBehaviour
     /// </summary>
     void Jump(float _jump_speed)
     {
+        _animator.SetTrigger("Jump");
         _rb.velocity = new Vector2(_rb.velocity.x, _jump_speed);
     }
+
     /// <summary>
     /// 画面下に落ちた時の処理
     /// </summary>
@@ -251,7 +239,7 @@ public class PlayerAction : MonoBehaviour
 
         if (_whereLine == Line.Bottom)
         {
-            //TODO:ポジション調べます
+            //TODO:マジックナンバーがあるから修正します　下も同様
             transform.position += new Vector3(-15, 5, 0); //-15 マス　下は-4
             
             Debug.Log("動いた");
@@ -272,6 +260,7 @@ public class PlayerAction : MonoBehaviour
         //
         if (CanChange())
         {
+            _animator.SetTrigger("Jump");
             if (_whereLine == Line.Bottom)//下レールにいる場合
             {
                 //引数の値でジャンプする
@@ -305,6 +294,20 @@ public class PlayerAction : MonoBehaviour
         //線路切り替えのクールタイムを代入している
         _chageJampLostTime = _changeJampCoolTime;
     }
+    /// <summary>
+    /// GetCompornentするものを入れている
+    /// </summary>
+    void GetComponent()
+    {
+        _ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
+        _goal = GameObject.Find("Goal").GetComponent<Transform>();
+        _coinAction = GameObject.Find("CoinParticle").GetComponent<CoinAction>();
+        _groundCollid = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
+        _rb = GetComponent<Rigidbody2D>();
+        _playerCollid = GetComponent<BoxCollider2D>();
+        _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
+    }
 
 //以下、可読性が良いか真偽の必要あり-----bool値---------------------------------------------
     /// <summary>
@@ -328,19 +331,6 @@ public class PlayerAction : MonoBehaviour
     {
           bool btnPush = (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0));
         return btnPush && _ground.IsGround && _playerCollid.enabled == true && _canChange;
-    }
-    /// <summary>
-    /// GetCompornentするものを入れている
-    /// </summary>
-    void GetComponent()
-    {
-        _ground = GameObject.Find("GroundCheck").GetComponent<GroundCheck>();
-        _goal = GameObject.Find("Goal").GetComponent<Transform>();
-        _coinAction = GameObject.Find("CoinParticle").GetComponent<CoinAction>();
-        _groundCollid = transform.Find("GroundCheck").GetComponent<BoxCollider2D>();
-        _rb = GetComponent<Rigidbody2D>();
-        _playerCollid = GetComponent<BoxCollider2D>();
-        _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
     }
 
 //-----------当たった時のメソッド------------------------------------------------------------------------------------
@@ -376,6 +366,7 @@ public class PlayerAction : MonoBehaviour
             if (State != STATE.NOMAL) return;
             State = STATE.DAMAGED;
             //ダメージを受けた処理　引数にはダメージを受けた値を
+            _animator.SetTrigger("Crash");
             Damage(_oneDamage);
             KnockBack();
         }
@@ -416,7 +407,7 @@ public class PlayerAction : MonoBehaviour
             //真下に落下してGameOverにしたいので当たり判定を消している
             _playerCollid.enabled = false;
 
-            //TODO: アニメーション
+            _animator.SetBool("Death",true);
         }
         else
         {
@@ -456,6 +447,8 @@ public class PlayerAction : MonoBehaviour
 
             _spriteRenderer.color += new Color(0,0,0,100);
             await UniTask.Delay(_flashingInterval, cancellationToken:ct);
+
+
         }
     }
 
