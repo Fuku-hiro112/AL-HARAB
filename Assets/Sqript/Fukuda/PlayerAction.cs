@@ -55,9 +55,10 @@ public class PlayerAction : MonoBehaviour
     private const int _oneDamage = 1;
 
     //enum系
+    [SerializeField]
     private Line _startLine;
     private Line _whereLine;
-    public STATE State;
+    public static STATE State;
     private GameMode _mode;
     internal float speed_elapsed_time;
 
@@ -102,6 +103,8 @@ public class PlayerAction : MonoBehaviour
         _mode = GameMode.Play;
     }
 
+//Updateだよ-----------------------------------------------------------------------------
+    
     void Update()
     {
         _animator.SetFloat("AirSpeedY", _rb.velocity.y);
@@ -157,7 +160,8 @@ public class PlayerAction : MonoBehaviour
         //ジャンプしてレールを切り替える
         LineChange();
     }
-
+//↓メソッド達-----------------------------------------------------------------------------------------------------------
+    
     /// <summary>
     /// Playerとの当たり判定を操作する
     /// </summary>
