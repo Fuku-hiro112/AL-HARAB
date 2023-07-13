@@ -92,14 +92,22 @@ public class PlayerAction : MonoBehaviour
         _bottomLineLayer = LayerMask.NameToLayer("BottomLine");
         _playerLayer = LayerMask.NameToLayer("Player");
 
-        //FIXDME: ‚±‚Ì2‚Â‚Ì‡”Ô‚ğã‰º•Ï‚¦‚½‚è‚·‚é‚Æ_bottom‚àture‚É‚È‚Á‚Ä‚µ‚Ü‚¤
-        LayerCollision(_bottomLineLayer, true);
-        LayerCollision(_topLineLayer,false);
+        _whereLine = _startLine;
+        if (_whereLine == Line.Bottom)
+        {
+            //FIXDME: ‚±‚Ì2‚Â‚Ì‡”Ô‚ğã‰º•Ï‚¦‚½‚è‚·‚é‚Æ_bottom‚àture‚É‚È‚Á‚Ä‚µ‚Ü‚¤
+            LayerCollision(_topLineLayer, false);
+            LayerCollision(_bottomLineLayer, true);
+        }
+        else
+        {
+            LayerCollision(_bottomLineLayer, false);
+            LayerCollision(_topLineLayer, true);
+        }
 
         _isFalling = false;
         HpCurrent =  3;
         State = STATE.NOMAL;
-        _whereLine = _startLine;
         _mode = GameMode.Play;
     }
 
