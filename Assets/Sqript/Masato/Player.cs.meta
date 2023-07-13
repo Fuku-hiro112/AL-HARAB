@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Result.cs.meta
-guid: 29e7746769b228c4ea9349abf8316616
-========
-guid: b2b3513f233337c4694489cd7c43c33b
->>>>>>>> deb1090ee5ae5497af7906b2c0d7928becc93042:Assets/BackGroundMove.cs.meta
+guid: d0e80603f7d5f474c8d10c44415eb026
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
