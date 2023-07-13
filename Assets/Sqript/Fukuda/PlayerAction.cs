@@ -350,7 +350,7 @@ public class PlayerAction : MonoBehaviour
 
 //-----------当たった時のメソッド------------------------------------------------------------------------------------
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "enemy")
         {
@@ -362,7 +362,7 @@ public class PlayerAction : MonoBehaviour
             //障害物ならメーターを2つ使う
             Destroy_or_Damage(_twoMeter, other);
         }
-        if (other.gameObject.tag == "rubble")
+        else if (other.gameObject.tag == "rubble")
         {
             State = STATE.DAMAGED;
             _animator.SetTrigger("Crash");
@@ -374,7 +374,7 @@ public class PlayerAction : MonoBehaviour
     /// <summary>
     /// メーターによってダメージを受けるか、相手を壊すかを判定する
     /// </summary>
-    void Destroy_or_Damage(int meter , Collider2D other)
+    void Destroy_or_Damage(int meter , Collision2D other)
     {
         Debug.Log(SpeedGage);
         //meterよりスピードゲージが溜まっていると
