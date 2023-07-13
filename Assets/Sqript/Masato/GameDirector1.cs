@@ -39,6 +39,6 @@ public class GameDirector1 : MonoBehaviour
     {
         timeText = GameObject.Find("TimeText").GetComponent<Text>();
         speedGage = GameObject.Find("SpeedGage").GetComponent<Image>();
-        playerAction1 = GameObject.Find("Player").GetComponent<PlayerAction1>();
+        playerAction1 = GameObject.Find("Player").GetComponent<PlayerAction>();
     }
 }

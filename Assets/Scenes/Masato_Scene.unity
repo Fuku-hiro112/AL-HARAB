@@ -688,7 +688,6 @@ GameObject:
   - component: {fileID: 641317349}
   - component: {fileID: 641317347}
   - component: {fileID: 641317352}
-  - component: {fileID: 641317353}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -836,23 +835,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &641317353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 641317346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3edab44ddde74df4ab1a6b6bc6c603b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed_elapsed_time: 0
-  speed: 5
-  jump_speed: 7.5
-  line_change_jump: 2.5
-  upper_line_tile: {fileID: 0}
 --- !u!1 &953715024
 GameObject:
   m_ObjectHideFlags: 0
@@ -1829,8 +1811,8 @@ Tilemap:
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: -10, y: -5, z: 0}
-  m_Size: {x: 22, y: 5, z: 1}
+  m_Origin: {x: -10, y: -6, z: 0}
+  m_Size: {x: 22, y: 6, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
