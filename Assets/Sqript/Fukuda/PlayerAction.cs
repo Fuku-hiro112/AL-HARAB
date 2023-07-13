@@ -15,23 +15,23 @@ public class PlayerAction : MonoBehaviour
     [SerializeField] float _topJump = 2.5f;
     [SerializeField] float _botmJump = 9.0f;
     [SerializeField] float _knockBackTime = 1.0f;
-    [SerializeField] float _changeJampCoolTime = 2.0f;
+    [SerializeField] float _changeJumpCoolTime = 2.0f;
     [SerializeField] Vector2 _knockBackPower = new Vector2(-3f,3f);
     [SerializeField] UnityEngine.UI.Image[] _imgHealth;
     [SerializeField] float _firstSpeed = 1.0f;
-    [SerializeField] int _flashingInterval = 100;
+    [SerializeField] int _flashInterval = 100;
     [SerializeField] int _loopCount = 10;
 
-    public static int HpCurrent;
+    public static int HpCurrent = 3;
     public static float ClearTime;
 
     [NonSerialized] public float SpeedGage = 0;
 
     private float posX;
     private float _controlLostTime;
-    private float _chageJampLostTime;
+    private float _changeJumpLostTime;
 
-    private bool _bControl,_canJump,_canChange,_isFalling;
+    private bool _bControl,_canJump,_canChange,_isFalling = false;
 
     private Animator _animator;
     private Rigidbody2D _rb;
@@ -81,7 +81,7 @@ public class PlayerAction : MonoBehaviour
         GetComponent();
 
         _controlLostTime = 0f;
-        _chageJampLostTime = 0f;
+        _changeJumpLostTime = 0f;
 
         // LayerIDを取得
         _topLineLayer = LayerMask.NameToLayer("TopLine");
@@ -110,7 +110,7 @@ public class PlayerAction : MonoBehaviour
 
         _canJump = Input.GetKeyDown(KeyCode.Space) && _ground.IsGround;
         _bControl = _controlLostTime <= 0;
-        _canChange = _chageJampLostTime <= 0; //HACK: 関数とか使って分かりやすく出来ないかな？
+        _canChange = _changeJumpLostTime <= 0; //HACK: 関数とか使って分かりやすく出来ないかな？
 
         if (IsHeadedGoal())//ゴールするまで
         {
@@ -140,7 +140,9 @@ public class PlayerAction : MonoBehaviour
         }
 
         //操作不可時間をカウントする ※参照型!!                      //HACK: 参照型使いたくないなぁ
-        ActionLostTime(ref _controlLostTime, ref _chageJampLostTime);//値が変わります
+        ActionLostTime(ref _controlLostTime, ref _changeJumpLostTime);//値が変わります
+        _controlLostTime = ActionLostTime(_controlLostTime);
+        _changeJumpLostTime = ActionLostTime(_changeJumpLostTime);
 
         if (State != STATE.NOMAL) return;
         if (_bControl)
@@ -234,7 +236,7 @@ public class PlayerAction : MonoBehaviour
             return;
         }
 
-        await UniTask.Delay(_flashingInterval * 2 * _loopCount, cancellationToken: ct);
+        await UniTask.Delay(_flashInterval * 2 * _loopCount, cancellationToken: ct);
 
         SpeedGage = 0;
 
@@ -293,7 +295,7 @@ public class PlayerAction : MonoBehaviour
             LayerCollision(_bottomLineLayer, true);//下の線路に当たるようにする
         }
         //線路切り替えのクールタイムを代入している
-        _chageJampLostTime = _changeJampCoolTime;
+        _changeJumpLostTime = _changeJumpCoolTime;
     }
     /// <summary>
     /// GetCompornentするものを入れている
@@ -442,12 +444,12 @@ public class PlayerAction : MonoBehaviour
             Debug.Log(_spriteRenderer.color.a);
 
             _spriteRenderer.color += new Color(0,0,0,-100);
-            await UniTask.Delay(_flashingInterval, cancellationToken:ct);
+            await UniTask.Delay(_flashInterval, cancellationToken:ct);
 
             Debug.Log(i+"回目");
 
             _spriteRenderer.color += new Color(0,0,0,100);
-            await UniTask.Delay(_flashingInterval, cancellationToken:ct);
+            await UniTask.Delay(_flashInterval, cancellationToken:ct);
 
 
         }
