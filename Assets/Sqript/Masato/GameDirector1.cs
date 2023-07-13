@@ -31,7 +31,8 @@ public class GameDirector1 : MonoBehaviour
     float Speed_rate()
     {
         float rate;
-        rate = speed/6;
+        float v = speed / 6;
+        rate = v;
         return rate;
     }
 
