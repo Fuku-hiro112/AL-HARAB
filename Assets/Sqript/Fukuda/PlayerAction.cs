@@ -93,8 +93,8 @@ public class PlayerAction : MonoBehaviour
         _playerLayer = LayerMask.NameToLayer("Player");
 
         //FIXDME: ‚±‚Ì2‚Â‚Ì‡”Ô‚ğã‰º•Ï‚¦‚½‚è‚·‚é‚Æ_bottom‚àture‚É‚È‚Á‚Ä‚µ‚Ü‚¤
-        LayerCollision(_bottomLineLayer, true);
         LayerCollision(_topLineLayer,false);
+        LayerCollision(_bottomLineLayer, true);
 
         _isFalling = false;
         HpCurrent =  3;
