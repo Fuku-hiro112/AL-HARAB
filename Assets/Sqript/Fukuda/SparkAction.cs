@@ -7,7 +7,6 @@ public class SparkAction : MonoBehaviour
     //SparkParticle.ParticleSystem.Emission.RateoverTime
     PlayerAction _playerAction;
     private GroundCheck _ground;
-    private bool _isGround ;
     float _speed;
 
     ParticleSystem _particleSystem;
@@ -24,9 +23,7 @@ public class SparkAction : MonoBehaviour
     }
     void Update()
     {
-        _isGround = _ground.IsGround;
-
-        if (_isGround)
+        if (_ground.IsGround)
         {
             //Particle‚ÌEmission‚ÌRateOverTime‚Ì’l‚ğXV
             _emissionModule.rateOverTime = _speed / 6 * 15;
