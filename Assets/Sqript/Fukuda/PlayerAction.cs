@@ -55,7 +55,7 @@ public class PlayerAction : MonoBehaviour
     private const int _oneDamage = 1;
 
     //enum系
-    [SerializeField]
+    private Line _startLine;
     private Line _whereLine;
     public STATE State;
     private GameMode _mode;
@@ -98,11 +98,11 @@ public class PlayerAction : MonoBehaviour
         _isFalling = false;
         HpCurrent =  3;
         State = STATE.NOMAL;
-        _whereLine = Line.Top;
+        _whereLine = _startLine;
         _mode = GameMode.Play;
     }
 
-    async void Update()
+    void Update()
     {
         _animator.SetFloat("AirSpeedY", _rb.velocity.y);
         _animator.SetBool("IsGround", _ground.IsGround);
@@ -130,8 +130,7 @@ public class PlayerAction : MonoBehaviour
             _isFalling = true;
             Damage(_oneDamage);
             var ct = this.GetCancellationTokenOnDestroy();
-            await AsyncFall(ct);
-
+            AsyncFall(ct).Forget();
         }
 
         //ノックバックした後止まる
@@ -374,7 +373,7 @@ public class PlayerAction : MonoBehaviour
             //ダメージを受けた処理　引数にはダメージを受けた値を
             _animator.SetTrigger("Crash");
             Damage(_oneDamage);
-            KnockBack();
+            AsyncKnockBack();
         }
     }
     /// <summary>
@@ -397,7 +396,7 @@ public class PlayerAction : MonoBehaviour
     /// <summary>
     /// ノックバック処理
     /// </summary>
-    async void KnockBack()
+    void AsyncKnockBack()
     {
         //進まないようにする
         _controlLostTime = _knockBackTime;
@@ -418,7 +417,7 @@ public class PlayerAction : MonoBehaviour
         else
         {
             var ct = this.GetCancellationTokenOnDestroy();
-            await AsyncFlash(ct);//点滅する
+            AsyncFlash(ct).Forget();//点滅する
 
             //15マス後ろに行く
             transform.position += new Vector3(-15, 1, 0);
