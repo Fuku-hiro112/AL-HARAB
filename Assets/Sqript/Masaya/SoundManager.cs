@@ -79,7 +79,9 @@ public class SESoundData
         Break_Enemy1,
         Break_Enemy2,
         Damage1,
-        Damage2, // ‚±‚ê‚ªƒ‰ƒxƒ‹‚É‚È‚é
+        Damage2,
+        confirm,
+        select,// ‚±‚ê‚ªƒ‰ƒxƒ‹‚É‚È‚é
     }
 
     public SE se;
