@@ -55,6 +55,7 @@ public class PlayerAction : MonoBehaviour
     private const int _oneDamage = 1;
 
     //enumån
+    [SerializeField]
     private Line _whereLine;
     public STATE State;
     private GameMode _mode;
