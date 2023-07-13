@@ -58,6 +58,8 @@ public class PlayerAction : MonoBehaviour
     private Line _whereLine;
     public STATE State;
     private GameMode _mode;
+    internal float speed_elapsed_time;
+
     enum Line
     {
         Top,
