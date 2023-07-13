@@ -2,53 +2,56 @@ using UnityEngine;
 
 public class GroundCheck : MonoBehaviour
 {
-    private string groundTag = "Ground";
-    private bool isGround = false;
-    private bool isGroundEnter, isGroundStay, isGroundExit;
-
+    private string _groundTag = "Ground";
+    public bool IsGround;//IsGroundJugeをUpdateでやって、これをstatidにして呼び出すと軽くなる説
+    /*
+    private bool _isGroundEnter, _isGroundStay, _isGroundExit;
+    */
+    /*
     //物理判定の更新毎に呼ぶ必要がある
     /// <summary>
     /// 地面に設置しているかを判定する
     /// </summary>
-    public bool IsGround()
+    public bool IsGroundJudg()
     {
-        if (isGroundEnter || isGroundStay)
+        if (_isGroundEnter || _isGroundStay)
         {
-            isGround = true;
-            Debug.Log("isGroundEnterだよ");
+            _isGround = true;
         }
-        else if (isGroundExit)
+        else if (_isGroundExit)
         {
-            isGround = false;
-            Debug.Log("isGroundExitだよ");
+            _isGround = false;
         }
 
-        isGroundEnter = false;
-        isGroundStay = false;
-        isGroundExit = false;
+        _isGroundEnter = false;
+        _isGroundStay = false;
+        _isGroundExit = false;
 
-        return isGround;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
+        return _isGround;
+    }*/
+    private void Start()
     {
-        if (collision.tag == groundTag)
+        IsGround = false;
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == _groundTag)
         {
-            isGroundEnter = true;
+            IsGround = true;
         }
     }
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D other)
     {
-        if (collision.tag == groundTag)
+        if (other.tag == _groundTag)
         {
-            isGroundStay = true;
+            IsGround = true;
         }
     }
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D other)
     {
-        if (collision.tag == groundTag)
+        if (other.tag == _groundTag)
         {
-            isGroundExit = true;
+            IsGround = false;
         }
     }
 }

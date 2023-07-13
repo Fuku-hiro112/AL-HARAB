@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - enemy
+  - obstacle
   layers:
   - Default
   - TransparentFX
@@ -12,11 +14,11 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Spark
+  - Player
   - Volume
-  - 
-  - 
+  - TopLine
+  - BottomLine
   - 
   - 
   - 
