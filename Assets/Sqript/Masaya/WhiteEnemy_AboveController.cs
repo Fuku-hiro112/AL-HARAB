@@ -5,10 +5,10 @@ using UnityEngine;
 public class WhiteEnemy_AboveController : MonoBehaviour
 {
     public Transform playerTransform;  // プレイヤーのTransform
-    public float detectionDistance = 20f;  // 敵が移動を開始するプレイヤーとの距離
+    public float detectionDistance = 7f;  // 敵が移動を開始するプレイヤーとの距離
 
     private bool isMoving = false;  // 移動中かどうか
-    private float moveSpeed = 3f;   // 移動速度
+    private float moveSpeed = 4.5f;   // 移動速度
     private Vector3 targetPosition; // 移動先の位置
 
     private void Start()
@@ -42,23 +42,5 @@ public class WhiteEnemy_AboveController : MonoBehaviour
 
     }
 
-
-
-
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-
-
-            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
-
-            player.KnockBack(transform.position);
-
-
-
-
-        }
-    }
+   
 }
