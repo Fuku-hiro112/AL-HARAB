@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WhiteEnemy_UnderController : MonoBehaviour
@@ -38,23 +36,6 @@ public class WhiteEnemy_UnderController : MonoBehaviour
             {
                 isMoving = false;
             }
-        }
-    }
-
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-
-
-            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
-
-            player.KnockBack(transform.position);
-
-
-
-
         }
     }
 }

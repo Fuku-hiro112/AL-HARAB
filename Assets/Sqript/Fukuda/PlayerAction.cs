@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 // private変数は　_を付けてcamelCasing（キャメルケース）を仕様する
@@ -380,7 +381,11 @@ public class PlayerAction : MonoBehaviour
         //meterよりスピードゲージが溜まっていると
         if (SpeedGage >= meter)
         {
-            other.gameObject.SetActive(false);
+            //
+            other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            //関数の呼び出し
+            other.gameObject.GetComponent<DisplayController>().BreakAnimation();
             SpeedGage -= meter;
         }
         else
@@ -402,12 +407,7 @@ public class PlayerAction : MonoBehaviour
     {
         //damage分Hpを減らし、UIも更新
         SetHealth(damage);
-
-        //Debug.Log(HpCurrent);
-
         SpeedGage = 0;
-
-        //IsDeath = HpCurrent <= 0;
         if(HpCurrent<=0)State = STATE.DEATH;
 
         action?.Invoke();//HACK: 試しに付けただけ

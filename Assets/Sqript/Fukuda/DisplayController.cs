@@ -1,30 +1,69 @@
-using System.Collections;
-using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 using UnityEngine;
 
 public class DisplayController : MonoBehaviour
 {
-    Transform _player;
-    float distance;
+    GameObject _batDeath;
+    //SpriteRenderer _batDeathSprt;
+    GameObject _whilteBatDeath;
+    //SpriteRenderer _whiteBatDeathSprt;
+    GameObject _barricadeDeath;
+
     [SerializeField]
+    Object _obj;
     enum Object
     {
-        Enemy,
-        Obstacle,
-        LineHole
-    }
-    void Start()
-    {
-        _player = GameObject.Find("Player").GetComponent<Transform>();
+        Bat,
+        WhiteBat,
+        Barricade
     }
 
-    void Update()
+    void Start()
     {
-        //オブジェクトとプレイヤーの距離
-        distance = transform.position.x - _player.position.x;
-        if (distance < -4)
+        _batDeath = GameObject.Find("BatDeathImg");
+        _whilteBatDeath = GameObject.Find("WhilteBatDeathImg");
+        _barricadeDeath = GameObject.Find("BarricadeDeathImg");
+    }
+
+    public void BreakAnimation()
+    {
+        var ct = this.GetCancellationTokenOnDestroy();
+        switch (_obj)
         {
-            gameObject.SetActive(false);
+            case Object.Bat:
+                AsyncBreakAnime(_batDeath,ct).Forget();
+                break;
+            case Object.WhiteBat:
+                AsyncBreakAnime(_whilteBatDeath,ct).Forget();
+                break;
+            case Object.Barricade:
+                AsyncBarricadeBreakAnime(_barricadeDeath,ct).Forget();
+                break;
+            default:
+                break;
         }
+    }
+    /// <summary>
+    /// 指定秒数、指定の位置で表示する
+    /// </summary>
+    async UniTask AsyncBreakAnime(GameObject obj ,CancellationToken ct)
+    {
+        obj.GetComponent<SpriteRenderer>().enabled = true;
+        obj.transform.position = this.transform.position;
+        
+        await UniTask.Delay(200, cancellationToken:ct);
+
+        obj.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    async UniTask AsyncBarricadeBreakAnime(GameObject obj ,CancellationToken ct)
+    {
+        obj.SetActive(true);
+        obj.transform.position = this.transform.position;
+        
+        await UniTask.Delay(2000, cancellationToken:ct);
+
+        obj.SetActive(false);
     }
 }
