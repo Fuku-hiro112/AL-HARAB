@@ -3,8 +3,8 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     //SpriteRenderer _thisSprite;
-    Transform _player;
-    float distance;
+    private Transform _player;
+    private float _distance;
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Transform>();
@@ -13,8 +13,8 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         //オブジェクトとプレイヤーの距離
-        distance = transform.position.x - _player.position.x;
-        if (distance < -4)
+        _distance = transform.position.x - _player.position.x;
+        if (_distance < -4)
         {
             gameObject.SetActive(false);
         }
