@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 // private変数は　_を付けてcamelCasing（キャメルケース）を仕様する
@@ -119,8 +120,6 @@ public class PlayerAction : MonoBehaviour
         _animator.SetBool("IsGround", _ground.IsGround);
 
         if (State == STATE.DEATH) _mode = GameMode.GameOver;
-
-        Debug.Log(_ground.IsGround);
 
         _canJump = Input.GetKeyDown(KeyCode.Space) && _ground.IsGround;
         _bControl = _controlLostTime <= 0;
@@ -350,33 +349,45 @@ public class PlayerAction : MonoBehaviour
         return btnPush && _ground.IsGround && _playerCollid.enabled == true && _canChange;
     }
 
-//-----------当たった時のメソッド------------------------------------------------------------------------------------
+//-----------当たった時------------------------------------------------------------------------------------
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "enemy")
         {
             //敵ならメーターを1つ使う
             Destroy_or_Damage(_oneMeter, other);
         }
-
-        if (other.gameObject.tag == "obstacle")
+        else if (other.gameObject.tag == "barricade")
         {
             //障害物ならメーターを2つ使う
             Destroy_or_Damage(_twoMeter, other);
         }
+        else if (other.gameObject.tag == "rubble")
+        {
+            State = STATE.DAMAGED;
+            _animator.SetTrigger("Crash");
+            Damage(_oneDamage);
+            AsyncKnockBack();
+        }
     }
 
+//-----------当たった時のメソッド------------------------------------------------------------------------------------
     /// <summary>
     /// メーターによってダメージを受けるか、相手を壊すかを判定する
     /// </summary>
-    void Destroy_or_Damage(int meter , Collider2D other)
+    void Destroy_or_Damage(int meter , Collision2D other)
     {
+        Debug.Log(SpeedGage);
         //meterよりスピードゲージが溜まっていると
         if (SpeedGage >= meter)
         {
+            //
+            other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            //関数の呼び出し
+            other.gameObject.GetComponent<DisplayController>().BreakAnimation();
             SpeedGage -= meter;
-            other.gameObject.SetActive(false);
         }
         else
         {
@@ -384,6 +395,7 @@ public class PlayerAction : MonoBehaviour
             State = STATE.DAMAGED;
             //ダメージを受けた処理　引数にはダメージを受けた値を
             _animator.SetTrigger("Crash");
+            Debug.Log($"{SpeedGage}だよおおお");
             Damage(_oneDamage);
             AsyncKnockBack();
         }
@@ -391,16 +403,12 @@ public class PlayerAction : MonoBehaviour
     /// <summary>
     /// 敵に当たってダメージを受けた時の処理
     /// </summary>
-    void Damage(int damage, Action action = null)//HACK:Actionは試しに付けただけ
+    //HACK:Actionは試しに付けただけ
+    void Damage(int damage, Action action = null)
     {
         //damage分Hpを減らし、UIも更新
         SetHealth(damage);
-
-        //Debug.Log(HpCurrent);
-
         SpeedGage = 0;
-
-        //IsDeath = HpCurrent <= 0;
         if(HpCurrent<=0)State = STATE.DEATH;
 
         action?.Invoke();//HACK: 試しに付けただけ
@@ -408,7 +416,7 @@ public class PlayerAction : MonoBehaviour
     /// <summary>
     /// ノックバック処理
     /// </summary>
-    void AsyncKnockBack()
+    async void AsyncKnockBack()
     {
         //進まないようにする
         _controlLostTime = _knockBackTime;
@@ -429,7 +437,7 @@ public class PlayerAction : MonoBehaviour
         else
         {
             var ct = this.GetCancellationTokenOnDestroy();
-            AsyncFlash(ct).Forget();//点滅する
+            await AsyncFlash(ct);//点滅する
 
             //15マス後ろに行く
             transform.position += new Vector3(-15, 1, 0);
@@ -455,17 +463,11 @@ public class PlayerAction : MonoBehaviour
     {
         for (int i = 0; i < _loopCount; i++)
         {
-            Debug.Log(_spriteRenderer.color.a);
-
             _spriteRenderer.color += new Color(0,0,0,-100);
             await UniTask.Delay(_flashInterval, cancellationToken:ct);
 
-            Debug.Log(i+"回目");
-
             _spriteRenderer.color += new Color(0,0,0,100);
             await UniTask.Delay(_flashInterval, cancellationToken:ct);
-
-
         }
     }
 

@@ -7,7 +7,6 @@ public class SparkAction : MonoBehaviour
     //SparkParticle.ParticleSystem.Emission.RateoverTime
     PlayerAction _playerAction;
     private GroundCheck _ground;
-    private bool _isGround ;
     float _speed;
 
     ParticleSystem _particleSystem;
@@ -24,9 +23,9 @@ public class SparkAction : MonoBehaviour
     }
     void Update()
     {
-        _isGround = _ground.IsGround;
+        _speed = _playerAction.SpeedGage;
 
-        if (_isGround)
+        if (_ground.IsGround)
         {
             //ParticleのEmissionのRateOverTimeの値を更新
             _emissionModule.rateOverTime = _speed / 6 * 15;
@@ -37,7 +36,6 @@ public class SparkAction : MonoBehaviour
             _emissionModule.rateOverTime = 0;
         }
 
-        _speed = _playerAction.SpeedGage;
 
         //GroundCheckのスクリプトを理解する
     }

@@ -1,59 +1,42 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WhiteEnemy_AboveController : MonoBehaviour
 {
-    public Transform playerTransform; // プレイヤーのTransformを格納する変数
-    public float detectionRange = 20f; // プレイヤーとの距離
-    public float moveDistance = 10f; // 下に移動する距離
-    public float moveSpeed = 0.7f;
+    public Transform playerTransform;  // プレイヤーのTransform
+    public float detectionDistance = 20f;  // 敵が移動を開始するプレイヤーとの距離
 
-    private bool hasMoved = false; // 下に移動したかどうか
+    private bool isMoving = false;  // 移動中かどうか
+    private float moveSpeed = 3f;   // 移動速度
+    private Vector3 targetPosition; // 移動先の位置
 
-    private Rigidbody2D rb = null;
-    private SpriteRenderer sr = null;
-
-
-
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
+        targetPosition = transform.position; // 初期位置を移動先の位置とする
     }
 
-    void Update()
+    private void Update()
     {
-        // プレイヤーとの距離を計算
-        float distance = Vector2.Distance(transform.position, playerTransform.position);
-
-        // プレイヤーが一定の距離以下に近づいた場合かつ下に移動していない場合
-        if (distance <= detectionRange && !hasMoved)
+        // プレイヤーとの距離が指定した範囲内に入った場合、移動を開始する
+        if (Vector3.Distance(transform.position, playerTransform.position) <= detectionDistance)
         {
-            // 下に移動
-            transform.Translate(Vector2.down * moveDistance * moveSpeed);
-            hasMoved = true;
+            if (!isMoving)
+            {
+                isMoving = true;
+                targetPosition = new Vector3(transform.position.x, transform.position.y - 3f, transform.position.z);  // 下に移動する位置を設定
+            }
         }
-    }
 
-
-
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player")
+        // 移動処理
+        if (isMoving)
         {
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
-
-            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
-
-            player.KnockBack(transform.position);
-
-
-
-
+            // 目標位置に到達したら移動終了
+            if (transform.position.y == -3)
+            {
+                isMoving = false;
+            }
         }
+
     }
 }
