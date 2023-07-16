@@ -349,7 +349,7 @@ public class PlayerAction : MonoBehaviour
         return btnPush && _ground.IsGround && _playerCollid.enabled == true && _canChange;
     }
 
-//-----------当たった時のメソッド------------------------------------------------------------------------------------
+//-----------当たった時------------------------------------------------------------------------------------
 
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -358,7 +358,7 @@ public class PlayerAction : MonoBehaviour
             //敵ならメーターを1つ使う
             Destroy_or_Damage(_oneMeter, other);
         }
-        else if (other.gameObject.tag == "obstacle")
+        else if (other.gameObject.tag == "barricade")
         {
             //障害物ならメーターを2つ使う
             Destroy_or_Damage(_twoMeter, other);
@@ -372,6 +372,7 @@ public class PlayerAction : MonoBehaviour
         }
     }
 
+//-----------当たった時のメソッド------------------------------------------------------------------------------------
     /// <summary>
     /// メーターによってダメージを受けるか、相手を壊すかを判定する
     /// </summary>
