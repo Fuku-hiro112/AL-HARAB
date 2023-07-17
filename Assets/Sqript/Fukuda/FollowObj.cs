@@ -38,7 +38,7 @@ public class FollowObj : MonoBehaviour
 
     void BackGround()
     {
-        if (_followObj.position.x < _goalObj.position.x)
+        if (_followObj.position.x < _goalObj.position.x-5)
         {
             //追従するオブジェクトのX座標
             float followObjPosX = _followObj.position.x + _diffBackGroundX;
