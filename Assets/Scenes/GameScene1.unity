@@ -1345,6 +1345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73270db7560bf4840adfb3c94d93b705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _waitTime: 2
 --- !u!1001 &215050540
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2250,8 +2251,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_SortingOrder: -1
+  m_Sprite: {fileID: 21300000, guid: f2656f43b7fbb07419277ffb6d26cbd9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2270,7 +2271,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 285131559}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 349.4, y: -0.31, z: 0}
+  m_LocalPosition: {x: 350, y: -0.31, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3569,7 +3570,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8846234567779579939, guid: d14a00892ef36f349ba851c47abe656d, type: 3}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6640522243259667644, guid: d14a00892ef36f349ba851c47abe656d, type: 3}
       propertyPath: m_Name
@@ -4367,7 +4368,13 @@ MonoBehaviour:
   _firstSpeed: 1
   _flashInterval: 100
   _loopCount: 10
+  HpCurrent: 3
+  ClearTime: 0
+  BreakEnemyNum: 0
+  BreakBarricadeNum: 0
   _startLine: 1
+  State: 0
+  _mode: 0
 --- !u!96 &641317354
 TrailRenderer:
   serializedVersion: 3
@@ -25590,6 +25597,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _followObj: {fileID: 27229006}
+  _goalObj: {fileID: 0}
   _objName: 0
 --- !u!114 &1322282805
 MonoBehaviour:
@@ -51714,7 +51722,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1445195726}
   m_LocalRotation: {x: -0, y: 0, z: -0.6923177, w: 0.7215928}
-  m_LocalPosition: {x: 31.82, y: 0.44, z: 0}
+  m_LocalPosition: {x: 172.6, y: 0.44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -52239,7 +52247,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 76, y: -118}
+  m_AnchoredPosition: {x: 356, y: -44}
   m_SizeDelta: {x: 150, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1557595471
@@ -52255,7 +52263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -52263,13 +52271,13 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 55c811c029aa1a742abfb4bafea86d6b, type: 3}
     m_FontSize: 25
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 67
-    m_Alignment: 5
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -52864,6 +52872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _followObj: {fileID: 641317350}
+  _goalObj: {fileID: 285131561}
   _objName: 1
 --- !u!1001 &1698921112
 PrefabInstance:
