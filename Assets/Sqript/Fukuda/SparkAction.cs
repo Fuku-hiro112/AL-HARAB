@@ -24,7 +24,6 @@ public class SparkAction : MonoBehaviour
     void Update()
     {
         _speed = _playerAction.SpeedGage;
-
         if (_ground.IsGround)
         {
             //Particle‚ÌEmission‚ÌRateOverTime‚Ì’l‚ğXV

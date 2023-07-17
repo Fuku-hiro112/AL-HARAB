@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 1900989563242471042}
   - component: {fileID: 1900989563242471043}
   - component: {fileID: 1900989563242471040}
-  - component: {fileID: 3239322310551951730}
-  - component: {fileID: -2687480772313622422}
   m_Layer: 0
   m_Name: WhiteBat
   m_TagString: enemy
@@ -153,28 +151,3 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
---- !u!114 &3239322310551951730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1900989563242471046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7949aea14c8df48409f1cfeff40801be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _obj: 1
---- !u!114 &-2687480772313622422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1900989563242471046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e5a81e673c2d304487dadc8f99a4f64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
