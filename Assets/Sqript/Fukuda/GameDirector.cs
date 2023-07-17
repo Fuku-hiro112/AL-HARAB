@@ -56,7 +56,7 @@ public class GameDirector : MonoBehaviour
             _speedGage.fillAmount = SpeedRate();
 
             //ì_êîÇï\é¶
-            _timeText.text = _playerAct.ClearTime.ToString("F0");
+            _timeText.text = _playerAct.ClearTime.ToString("F2");
         }
 
         if (_playerAct._mode == PlayerAction.GameMode.Play && _isSaveLoad) return;

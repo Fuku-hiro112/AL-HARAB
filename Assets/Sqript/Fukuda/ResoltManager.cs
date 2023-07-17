@@ -63,8 +63,4 @@ public class ResoltManager : MonoBehaviour
         float hpScore = _hpCurrent * 1000;
         return timeScone + enemyScore + hpScore;
     }
-    void Update()
-    {
-        
-    }
 }
