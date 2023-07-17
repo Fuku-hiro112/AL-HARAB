@@ -13,9 +13,7 @@ public class GameDirector : MonoBehaviour
     private Image _speedGage;
     private Text _timeText;
     private PlayerAction _playerAct;
-    //PlayerAction.GameMode _gameMode;
     private float _speed;
-    private string _sceneName;
 
     private bool _isSaveLoad = true;
 
@@ -35,9 +33,6 @@ public class GameDirector : MonoBehaviour
     void Start()
     {
         FindConponent();
-
-        //óvÇÁÇ»Ç¢Ç©Ç‡
-        _sceneName = SceneManager.GetActiveScene().name;
         
         _tagEnemys = GameObject.FindGameObjectsWithTag("enemy");
         _tagBarricades = GameObject.FindGameObjectsWithTag("barricade");
@@ -61,7 +56,7 @@ public class GameDirector : MonoBehaviour
             _speedGage.fillAmount = SpeedRate();
 
             //ì_êîÇï\é¶
-            _timeText.text = _playerAct.ClearTime.ToString("F2");
+            _timeText.text = _playerAct.ClearTime.ToString("F0");
         }
 
         if (_playerAct._mode == PlayerAction.GameMode.Play && _isSaveLoad) return;
@@ -112,10 +107,7 @@ public class GameDirector : MonoBehaviour
         {
             await UniTask.Delay((int)(waitTime * 1000), cancellationToken: ct);
         }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
+        catch (OperationCanceledException) { }
         finally
         {
             SceneManager.LoadScene("ResultScene");
