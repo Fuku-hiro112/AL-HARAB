@@ -1345,7 +1345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73270db7560bf4840adfb3c94d93b705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _waitTime: 0
+  _waitTime: 2
 --- !u!1001 &215050540
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4368,7 +4368,12 @@ MonoBehaviour:
   _firstSpeed: 1
   _flashInterval: 100
   _loopCount: 10
+  HpCurrent: 3
+  ClearTime: 0
+  BreakEnemyNum: 0
+  BreakBarricadeNum: 0
   _startLine: 1
+  State: 0
   _mode: 0
 --- !u!96 &641317354
 TrailRenderer:
@@ -25592,6 +25597,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _followObj: {fileID: 27229006}
+  _goalObj: {fileID: 0}
   _objName: 0
 --- !u!114 &1322282805
 MonoBehaviour:
@@ -52866,6 +52872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _followObj: {fileID: 641317350}
+  _goalObj: {fileID: 285131561}
   _objName: 1
 --- !u!1001 &1698921112
 PrefabInstance:

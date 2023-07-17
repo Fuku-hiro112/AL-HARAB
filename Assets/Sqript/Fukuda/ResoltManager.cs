@@ -54,7 +54,7 @@ public class ResoltManager : MonoBehaviour
         else _rank = "C";
         _txtRank.text = _rank;
         _txtClearTime.text = $"{_clearTime.ToString("F")} SEC";
-        _txtClearScore.text = _totalScore.ToString("d4");
+        _txtClearScore.text = _totalScore.ToString("f0");
     }
     float ScoreCalculation()
     {

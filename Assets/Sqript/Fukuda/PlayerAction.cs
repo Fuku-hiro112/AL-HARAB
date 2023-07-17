@@ -135,6 +135,10 @@ public class PlayerAction : MonoBehaviour
             //Œo‰ßŽžŠÔ‚ð‘«‚·
             ClearTime += Time.deltaTime;
         }
+        else
+        {
+            _mode = GameMode.GameCrear;
+        }
 
         //—Ž‰º”»’è
         if (transform.position.y <= _offScreen)
