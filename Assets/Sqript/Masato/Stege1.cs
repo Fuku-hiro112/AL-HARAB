@@ -27,7 +27,7 @@ public class Stage1 : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            SceneManager.LoadScene("GameScene");
+            SceneManager.LoadScene("GameScene1");
         }
     }
 }

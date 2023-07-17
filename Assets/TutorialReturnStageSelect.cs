@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;//LoadSceneを使うのに必要
 
-public class Stage2 : MonoBehaviour
+public class TutorialReturnStageSelect : MonoBehaviour
 {
     private bool firstPush = false;
-    //ステージ2のボタンを押されたら呼ばれる
     // Start is called before the first frame update
-    public void PressStart()
+    void PressStart()
     {
         Debug.Log("Press Start!");
         if(!firstPush)
@@ -20,11 +19,11 @@ public class Stage2 : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void Update()
+    void Update()
     {
         if(Input.GetMouseButtonDown(0))
         {
-            SceneManager.LoadScene("GameScene2");
+            SceneManager.LoadScene("StageSelectScene");
         }
     }
 }
