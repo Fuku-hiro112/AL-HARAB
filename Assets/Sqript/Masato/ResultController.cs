@@ -8,24 +8,24 @@ public class ResultController : MonoBehaviour
     private bool firstPush = false;
     //ステージクリア後ゲーム画面を押されたら呼ばれる
     // Start is called before the first frame update
-    void Start()
+    public void PressStart()
     {
         Debug.Log("Press Start!");
-        if(!firstPush)
+        if (!firstPush)
         {
             Debug.Log("Go Next Scene!");
             //ここに次のシーンへ行く命令を書く
             firstPush = true;
         }
-        
+
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         if (Input.GetMouseButton(0))
         {
-            SceneManager.LoadScene("Scene");
+            SceneManager.LoadScene("StageSelectScene");
         }
     }
 }
