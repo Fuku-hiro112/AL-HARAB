@@ -3,22 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;//LoadSceneを使うのに必要
 
-public class Stage1 : MonoBehaviour
+public class Tutorial : MonoBehaviour
 {
     private bool firstPush = false;
-    //ステージ選択ボタンを押されたら呼ばれる
-   
+    //チュートリアルボタンを押されると呼ばれる
     // Start is called before the first frame update
     public void PressStart()
     {
         Debug.Log("Press Start!");
-
         if (!firstPush)
         {
             Debug.Log("Go Next Scene!");
             //ここに次のシーンへ行く命令を書く
             firstPush = true;
-
         }
     }
 
@@ -27,7 +24,7 @@ public class Stage1 : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            SceneManager.LoadScene("GameScene1");
+            SceneManager.LoadScene("TutorialScene");
         }
     }
 }

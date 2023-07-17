@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 // private変数は　_を付けてcamelCasing（キャメルケース）を仕様する
@@ -22,8 +23,10 @@ public class PlayerAction : MonoBehaviour
     [SerializeField] int _flashInterval = 100;
     [SerializeField] int _loopCount = 10;
 
-    public static int HpCurrent = 3;
-    public static float ClearTime;
+    public int HpCurrent = 3;
+    public float ClearTime;
+    public byte BreakEnemyNum;
+    public byte BreakBarricadeNum;
 
     [NonSerialized] public float SpeedGage = 0;
 
@@ -58,8 +61,8 @@ public class PlayerAction : MonoBehaviour
     [SerializeField]
     private Line _startLine;
     private Line _whereLine;
-    public static STATE State;
-    private GameMode _mode;
+    public STATE State;
+    public GameMode _mode;
     internal float speed_elapsed_time;
 
     enum Line
@@ -73,7 +76,7 @@ public class PlayerAction : MonoBehaviour
         DAMAGED,
         DEATH
     }
-    enum GameMode
+    public enum GameMode
     {
         Play,
         GameOver,
@@ -84,8 +87,11 @@ public class PlayerAction : MonoBehaviour
     {
         GetComponent();
 
+        BreakBarricadeNum = 0;
+        BreakEnemyNum = 0;
         _controlLostTime = 0f;
         _changeJumpLostTime = 0f;
+        ClearTime = 0;
 
         // LayerIDを取得
         _topLineLayer = LayerMask.NameToLayer("TopLine");
@@ -128,6 +134,10 @@ public class PlayerAction : MonoBehaviour
         {
             //経過時間を足す
             ClearTime += Time.deltaTime;
+        }
+        else
+        {
+            _mode = GameMode.GameCrear;
         }
 
         //落下判定
@@ -348,19 +358,19 @@ public class PlayerAction : MonoBehaviour
         return btnPush && _ground.IsGround && _playerCollid.enabled == true && _canChange;
     }
 
-//-----------当たった時のメソッド------------------------------------------------------------------------------------
+//-----------当たった時------------------------------------------------------------------------------------
 
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "enemy")
         {
             //敵ならメーターを1つ使う
-            Destroy_or_Damage(_oneMeter, other);
+            Destroy_or_Damage(_oneMeter, other,ref BreakEnemyNum);//参照型あり
         }
-        else if (other.gameObject.tag == "obstacle")
+        else if (other.gameObject.tag == "barricade")
         {
             //障害物ならメーターを2つ使う
-            Destroy_or_Damage(_twoMeter, other);
+            Destroy_or_Damage(_twoMeter, other,ref BreakBarricadeNum);//参照型あり
         }
         else if (other.gameObject.tag == "rubble")
         {
@@ -371,17 +381,23 @@ public class PlayerAction : MonoBehaviour
         }
     }
 
+//-----------当たった時のメソッド------------------------------------------------------------------------------------
     /// <summary>
     /// メーターによってダメージを受けるか、相手を壊すかを判定する
     /// </summary>
-    void Destroy_or_Damage(int meter , Collision2D other)
+    void Destroy_or_Damage(int meter , Collision2D other ,ref byte count)//参照型使ってます
     {
         Debug.Log(SpeedGage);
         //meterよりスピードゲージが溜まっていると
         if (SpeedGage >= meter)
         {
-            other.gameObject.SetActive(false);
+            //
+            other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            //関数の呼び出し
+            other.gameObject.GetComponent<DisplayController>().BreakAnimation();
             SpeedGage -= meter;
+            count++;
         }
         else
         {
@@ -402,15 +418,10 @@ public class PlayerAction : MonoBehaviour
     {
         //damage分Hpを減らし、UIも更新
         SetHealth(damage);
-
-        //Debug.Log(HpCurrent);
-
         SpeedGage = 0;
-
-        //IsDeath = HpCurrent <= 0;
         if(HpCurrent<=0)State = STATE.DEATH;
 
-        action?.Invoke();//HACK: 試しに付けただけ
+        action?.Invoke();//HACK: 試しに付けただけ勉強中
     }
     /// <summary>
     /// ノックバック処理
@@ -431,7 +442,7 @@ public class PlayerAction : MonoBehaviour
             //真下に落下してGameOverにしたいので当たり判定を消している
             _playerCollid.enabled = false;
 
-            _animator.SetBool("Death",true);
+            _animator.SetTrigger("IsDeath");
         }
         else
         {
