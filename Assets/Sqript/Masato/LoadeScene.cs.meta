@@ -1,13 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Sqript/Masato/LoadeScene.cs.meta
 guid: 2ddd529c43ec13245ad97b0fec2686fe
-========
-<<<<<<<< HEAD:Assets/Result.cs.meta
-guid: b97ea348bd4a6b841be206af7450862d
-========
-guid: b2b3513f233337c4694489cd7c43c33b
->>>>>>>> deb1090ee5ae5497af7906b2c0d7928becc93042:Assets/BackGroundMove.cs.meta
->>>>>>>> parent of e473dd6 (aaa):Assets/Result.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

@@ -5,6 +5,7 @@ public class FollowObj : MonoBehaviour
     [SerializeField] Transform _followObj;
     [SerializeField] Transform _goalObj;
     private int _diffBackGroundX = 4; //PlayerÇ∆ÇÃãóó£ÇÃç∑Å@Åidiff = differenceÅj
+    //Transform _sparkPos;
 
     public enum ObjName
     {
@@ -12,6 +13,11 @@ public class FollowObj : MonoBehaviour
         BackGround
     }
     [SerializeField] ObjName _objName = ObjName.BackGround;
+
+    private void Start()
+    {
+        //_sparkPos = GameObject.Find("SparkPos").GetComponent<Transform>();
+    }
 
     void Update()
     {

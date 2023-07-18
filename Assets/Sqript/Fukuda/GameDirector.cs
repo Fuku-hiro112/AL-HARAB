@@ -1,16 +1,14 @@
-<<<<<<< HEAD
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 using TMPro;
-=======
->>>>>>> parent of e473dd6 (aaa)
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
 
 public class GameDirector : MonoBehaviour
 {
-<<<<<<< HEAD
     [SerializeField] private float _waitTime;
     private Image _speedGage;
     private Text _timeText;
@@ -31,17 +29,10 @@ public class GameDirector : MonoBehaviour
     public static byte _breakableObjNum;
     [NonSerialized]
     public static float _clearTime;
-=======
-    Image _speedGage;
-    Text _timeText;
-    PlayerAction _playerAction;
-    float _speed;
->>>>>>> parent of e473dd6 (aaa)
 
     void Start()
     {
         FindConponent();
-<<<<<<< HEAD
         
         _tagEnemys = GameObject.FindGameObjectsWithTag("enemy");
         _tagBarricades = GameObject.FindGameObjectsWithTag("barricade");
@@ -52,10 +43,6 @@ public class GameDirector : MonoBehaviour
 
         PlayerPrefs.SetInt("EnemyNum",_enemyNum);
         PlayerPrefs.SetInt("BarricadeNum",_barricadeNum);
-=======
-
-
->>>>>>> parent of e473dd6 (aaa)
     }
     
     void Update()
@@ -69,7 +56,7 @@ public class GameDirector : MonoBehaviour
             _speedGage.fillAmount = SpeedRate();
 
             //点数を表示
-            _timeText.text = _playerAct.ClearTime.ToString("F2");
+            _timeText.text = _playerAct.ClearTime.ToString("F0");
         }
 
         if (_playerAct._mode == PlayerAction.GameMode.Play && _isSaveLoad) return;
@@ -111,7 +98,6 @@ public class GameDirector : MonoBehaviour
         _speedGage = GameObject.Find("SpeedGage").GetComponent<Image>();
         _playerAct = GameObject.Find("Player").GetComponent<PlayerAction>();
     }
-<<<<<<< HEAD
     /// <summary>
     /// リザルト画面をロードする
     /// </summary>
@@ -127,6 +113,4 @@ public class GameDirector : MonoBehaviour
             SceneManager.LoadScene("ResultScene");
         }
     }
-=======
->>>>>>> parent of e473dd6 (aaa)
 }

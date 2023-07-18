@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 // private変数は　_を付けてcamelCasing（キャメルケース）を仕様する
@@ -357,7 +358,7 @@ public class PlayerAction : MonoBehaviour
         return btnPush && _ground.IsGround && _playerCollid.enabled == true && _canChange;
     }
 
-//-----------当たった時のメソッド------------------------------------------------------------------------------------
+//-----------当たった時------------------------------------------------------------------------------------
 
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -366,7 +367,7 @@ public class PlayerAction : MonoBehaviour
             //敵ならメーターを1つ使う
             Destroy_or_Damage(_oneMeter, other,ref BreakEnemyNum);//参照型あり
         }
-        else if (other.gameObject.tag == "obstacle")
+        else if (other.gameObject.tag == "barricade")
         {
             //障害物ならメーターを2つ使う
             Destroy_or_Damage(_twoMeter, other,ref BreakBarricadeNum);//参照型あり
@@ -380,6 +381,7 @@ public class PlayerAction : MonoBehaviour
         }
     }
 
+//-----------当たった時のメソッド------------------------------------------------------------------------------------
     /// <summary>
     /// メーターによってダメージを受けるか、相手を壊すかを判定する
     /// </summary>
@@ -389,7 +391,11 @@ public class PlayerAction : MonoBehaviour
         //meterよりスピードゲージが溜まっていると
         if (SpeedGage >= meter)
         {
-            other.gameObject.SetActive(false);
+            //
+            other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            //関数の呼び出し
+            other.gameObject.GetComponent<DisplayController>().BreakAnimation();
             SpeedGage -= meter;
             count++;
         }
@@ -412,12 +418,7 @@ public class PlayerAction : MonoBehaviour
     {
         //damage分Hpを減らし、UIも更新
         SetHealth(damage);
-
-        //Debug.Log(HpCurrent);
-
         SpeedGage = 0;
-
-        //IsDeath = HpCurrent <= 0;
         if(HpCurrent<=0)State = STATE.DEATH;
 
         action?.Invoke();//HACK: 試しに付けただけ勉強中
