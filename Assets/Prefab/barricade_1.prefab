@@ -11,11 +11,9 @@ GameObject:
   - component: {fileID: 8083344138095756727}
   - component: {fileID: 7950104903881276491}
   - component: {fileID: -8846234567779579939}
-  - component: {fileID: 5615420261790102258}
-  - component: {fileID: 665684043242315722}
   m_Layer: 0
   m_Name: barricade_1
-  m_TagString: barricade
+  m_TagString: obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,28 +130,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
---- !u!114 &5615420261790102258
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6640522243259667644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e5a81e673c2d304487dadc8f99a4f64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &665684043242315722
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6640522243259667644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7949aea14c8df48409f1cfeff40801be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _obj: 2

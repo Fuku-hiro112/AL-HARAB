@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4311284351445750469}
   - component: {fileID: 1704800682753722087}
   - component: {fileID: -2315673778950413786}
-  - component: {fileID: -8254108421413869924}
   m_Layer: 0
   m_Name: rubble_1
   m_TagString: rubble
@@ -131,15 +130,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
---- !u!114 &-8254108421413869924
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4234821855631285639}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e5a81e673c2d304487dadc8f99a4f64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
