@@ -12,21 +12,12 @@ EditorBuildSettings:
     path: Assets/Scenes/StageSelectScene.unity
     guid: 9265c1e6be506e84a87a0e36b384c2a2
   - enabled: 1
-<<<<<<< HEAD
-    path: Assets/Scenes/TutorialScene.unity
-    guid: f8906a835dba5a1498578ae3f1030da0
-  - enabled: 1
     path: Assets/Scenes/GameScene1.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
     path: Assets/Scenes/GameScene2.unity
     guid: cdb35193010db304395d56839d2f0d44
   - enabled: 1
-=======
-    path: Assets/Scenes/GameScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 1
->>>>>>> parent of e473dd6 (aaa)
     path: Assets/Scenes/ResultScene.unity
     guid: ec35248ab291fbf4db3bbaca0f46c966
   m_configObjects: {}

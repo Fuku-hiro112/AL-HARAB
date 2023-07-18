@@ -3,8 +3,8 @@ using UnityEngine;
 public class FollowObj : MonoBehaviour
 {
     [SerializeField] Transform _followObj;
-    [SerializeField] Transform _goalObj;
     private int _diffBackGroundX = 4; //Playerとの距離の差　（diff = difference）
+    //Transform _sparkPos;
 
     public enum ObjName
     {
@@ -12,6 +12,11 @@ public class FollowObj : MonoBehaviour
         BackGround
     }
     [SerializeField] ObjName _objName = ObjName.BackGround;
+
+    private void Start()
+    {
+        //_sparkPos = GameObject.Find("SparkPos").GetComponent<Transform>();
+    }
 
     void Update()
     {
@@ -32,13 +37,9 @@ public class FollowObj : MonoBehaviour
 
     void BackGround()
     {
-        if (_followObj.position.x < _goalObj.position.x-5)
-        {
-            //追従するオブジェクトのX座標
-            float followObjPosX = _followObj.position.x + _diffBackGroundX;
-            transform.position = new Vector2(followObjPosX, transform.position.y);
-        }
-        
+        //追従するオブジェクトのX座標
+        float followObjPosX = _followObj.position.x + _diffBackGroundX;
+        transform.position = new Vector2(followObjPosX, transform.position.y);
     }
 
     void Particle()

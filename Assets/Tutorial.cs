@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;//LoadSceneを使うのに必要
 
-public class TutorialReturnStageSelect : MonoBehaviour
+public class Tutorial : MonoBehaviour
 {
     private bool firstPush = false;
+    //チュートリアルボタンを押されると呼ばれる
     // Start is called before the first frame update
-    void PressStart()
+    public void PressStart()
     {
         Debug.Log("Press Start!");
-        if(!firstPush)
+        if (!firstPush)
         {
             Debug.Log("Go Next Scene!");
             //ここに次のシーンへ行く命令を書く
@@ -19,11 +20,11 @@ public class TutorialReturnStageSelect : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
-            SceneManager.LoadScene("StageSelectScene");
+            SceneManager.LoadScene("TutorialScene");
         }
     }
 }
