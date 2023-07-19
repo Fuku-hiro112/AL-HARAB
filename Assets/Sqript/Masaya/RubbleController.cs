@@ -41,12 +41,11 @@ public class RubbleController : MonoBehaviour
             {
                 isDropped = false;
             }
-            //@‚R‚Â‚ÌŠ¢âI‚ğœ‹AŠ¢âI‚Ì‰ò‚ğ¶¬
-            RubbleCluster.gameObject.SetActive(true);
-            Rubbles.gameObject.SetActive(false);
         }
-       
 
+        //@‚R‚Â‚ÌŠ¢âI‚ğœ‹AŠ¢âI‚Ì‰ò‚ğ¶¬
+        RubbleCluster.gameObject.SetActive(true);
+        Rubbles.gameObject.SetActive(false);
     }
 }
 
