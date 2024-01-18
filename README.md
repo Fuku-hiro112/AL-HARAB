@@ -27,9 +27,8 @@ UniTask
   
 ## [プレイ動画](https://drive.google.com/drive/folders/1ODkzsM5aIC6EpttxeOQDj6LvzTHybld8)   
 本動画はステージ1、ステージ2、ステージ3に分けて撮影しています。  
-ステージ1の動画冒頭には、タイトル画面・チュートリアル画面も撮影されています。
-   
-Uploading ALHARAB.mp4…  
- 
+ステージ1の動画冒頭には、タイトル画面・チュートリアル画面も撮影されています。  
+ ![Videotogif](https://github.com/Fuku-hiro112/AL-HARAB/assets/134264092/84bd2fc4-a9f5-4e69-ab4b-de26ffc23e50)  
+  
 ## コーディング範囲  
 Assets\Scripts\Fukudaの中のcsファイル全てがコーディング範囲です。  
