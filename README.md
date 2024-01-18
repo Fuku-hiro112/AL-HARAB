@@ -1,5 +1,3 @@
-
-https://github.com/Fuku-hiro112/AL-HARAB/assets/134264092/93495a9c-9a72-452d-b927-ddbb25112466
 # 【概要】 
 ![image](https://github.com/Fuku-hiro112/AL-HARAB/assets/134264092/47c1f2da-894a-4a25-b7d0-c0501a2b1e6f)  
 ## [ゲーム概要](https://drive.google.com/drive/folders/1aJuk6leiP-KqE3fRmX9zIGPliDWnxC-U)  
