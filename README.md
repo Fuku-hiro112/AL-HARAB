@@ -2,6 +2,7 @@ https://github.com/Fuku-hiro112/AL-HARAB/assets/134264092/fbf18573-045d-46fa-b00
 # 【概要】 
 ![image](https://github.com/Fuku-hiro112/AL-HARAB/assets/134264092/47c1f2da-894a-4a25-b7d0-c0501a2b1e6f)  
 ## [ゲーム概要](https://drive.google.com/drive/folders/1aJuk6leiP-KqE3fRmX9zIGPliDWnxC-U)  
+`https://drive.google.com/drive/folders/1aJuk6leiP-KqE3fRmX9zIGPliDWnxC-U`
 リンク先の企画書にて概要説明を行っています.  
   
 ## 製作期間   
@@ -24,7 +25,8 @@ Git, GitHubWindows, GitHub,
 **・ライブラリ**  
 UniTask  
   
-## [プレイ動画](https://drive.google.com/drive/folders/1ODkzsM5aIC6EpttxeOQDj6LvzTHybld8)   
+## [プレイ動画](https://drive.google.com/drive/folders/1ODkzsM5aIC6EpttxeOQDj6LvzTHybld8)  
+[`https://drive.google.com/drive/folders/1ODkzsM5aIC6EpttxeOQDj6LvzTHybld8`](https://drive.google.com/drive/folders/1ODkzsM5aIC6EpttxeOQDj6LvzTHybld8)  
 本動画はステージ1、ステージ2、ステージ3に分けて撮影しています。  
 ステージ1の動画冒頭には、タイトル画面・チュートリアル画面も撮影されています。  
 
