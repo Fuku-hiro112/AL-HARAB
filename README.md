@@ -2,7 +2,7 @@ https://github.com/Fuku-hiro112/AL-HARAB/assets/134264092/fbf18573-045d-46fa-b00
 # 【概要】 
 ![image](https://github.com/Fuku-hiro112/AL-HARAB/assets/134264092/47c1f2da-894a-4a25-b7d0-c0501a2b1e6f)  
 ## [ゲーム概要](https://drive.google.com/drive/folders/1aJuk6leiP-KqE3fRmX9zIGPliDWnxC-U)  
-`https://drive.google.com/drive/folders/1aJuk6leiP-KqE3fRmX9zIGPliDWnxC-U`
+[`https://drive.google.com/drive/folders/1aJuk6leiP-KqE3fRmX9zIGPliDWnxC-U`](https://drive.google.com/drive/folders/1aJuk6leiP-KqE3fRmX9zIGPliDWnxC-U)  
 リンク先の企画書にて概要説明を行っています.  
   
 ## 製作期間   
